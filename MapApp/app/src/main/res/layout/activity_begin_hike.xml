@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="50px"
+    android:stretchColumns="1">
+
+    <TableRow
+        android:layout_marginTop="30px"
+        android:layout_marginBottom="10px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gjeter "
+            android:textSize="8pt"
+            android:layout_column="0"/>
+
+        <EditText
+            android:id="@+id/name_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Gjeters navn"
+            android:inputType="textCapWords"
+            android:layout_column="1"
+            android:lines="1"
+            android:maxLines="1"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_marginBottom="10px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deltakere "
+            android:textSize="8pt"
+            android:layout_column="0"/>
+
+        <Spinner
+            android:id="@+id/participants_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_column="1"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_marginTop="0px"
+        android:layout_marginBottom="10px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vær "
+            android:textSize="8pt"
+            android:layout_column="0"/>
+
+        <EditText
+            android:id="@+id/weather_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Hvordan er været"
+            android:inputType="textCapSentences"
+            android:layout_column="1"
+            android:lines="1"
+            android:maxLines="1"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_marginBottom="10px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beskrivelse "
+            android:textSize="8pt"
+            android:layout_column="0" />
+
+        <EditText
+            android:id="@+id/description_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Beskrivelse av turen"
+            android:inputType="textCapSentences|textMultiLine"
+            android:layout_column="1" />
+    </TableRow>
+
+    <TableRow
+        android:layout_marginBottom="10px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Velg kart "
+            android:textSize="8pt"
+            android:layout_column="0" />
+
+        <Spinner
+            android:id="@+id/map_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_column="1" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20px">
+        <Button
+            android:id="@+id/btn_start_hike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Start turen"
+            android:layout_span="2"
+            android:textSize="8pt"/>
+    </TableRow>
+</TableLayout>
+

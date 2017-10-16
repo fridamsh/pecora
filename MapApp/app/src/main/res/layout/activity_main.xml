@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="30px">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Velkommen til Pecora, bonde!"
+            android:paddingBottom="20px"
+            android:textSize="8pt"
+            android:gravity="center"/>
+
+        <Button android:id="@+id/btnStartNewHike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Start ny oppsynstur"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+        <Button android:id="@+id/btnNewHike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Ny oppsynstur"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+        <Button android:id="@+id/btnDownloadMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Last ned kart"
+            android:layout_centerHorizontal="true"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+        <Button android:id="@+id/btnCachedMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Se cacha kart"
+            android:layout_centerHorizontal="true"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+        <Button android:id="@+id/btnTrackingMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Track rute på kart"
+            android:layout_centerHorizontal="true"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+        <Button android:id="@+id/btnTracking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10px"
+            android:text="Track rute på kart 2"
+            android:layout_centerHorizontal="true"
+            android:textSize="7pt"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Her er det cacha kartet:"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textSize="7pt"/>
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtn_center_map"
+        android:src="@drawable/ic_center_map"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:background="#00ffffff"
+        android:contentDescription="@string/bt_center_map_description"
+        android:cropToPadding="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtn_follow_me"
+        android:src="@drawable/ic_follow_me"
+        android:background="#00ffffff"
+        android:contentDescription="@string/bt_follow_me_description"
+        android:cropToPadding="true"
+        android:layout_below="@+id/imgBtn_center_map"
+        android:layout_alignLeft="@+id/imgBtn_center_map"
+        android:layout_alignStart="@+id/imgBtn_center_map"
+        android:layout_marginTop="10dp" />
+
+</RelativeLayout>
