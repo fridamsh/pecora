@@ -24,6 +24,7 @@ import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
@@ -54,8 +55,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     List<GeoPoint> geoPoints;
     private GeoPoint currentPoint;
 
-    private ImageButton btnFollowMe;
+    //private ImageButton btnFollowMe;
     private ImageButton btnCenterMap;
+
+    private int minZoom, maxZoom;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.setUseDataConnection(false);
+        mMapView.setMinZoomLevel(13);
+        mMapView.setMaxZoomLevel(18);
         mMapController = mMapView.getController();
 
         mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
@@ -100,12 +105,18 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             /*mRotationGestureOverlay = new RotationGestureOverlay(mMapView);
             mRotationGestureOverlay.setEnabled(true);*/
 
-            //mMapController.setZoom(15);
-            mMapController.setZoom(16);
+            if (fileName.equals("gloshaugen.sqlite"))
+            {
+                mMapController.setZoom(16);
+            } else {
+                mMapController.setZoom(15);
+            }
+            //mMapController.setZoom(minZoom); <- this would be nice
             mMapView.setTilesScaledToDpi(true);
             mMapView.setBuiltInZoomControls(true);
             mMapView.setMultiTouchControls(true);
             mMapView.setFlingEnabled(true);
+            //mMapView.setScrollableAreaLimitDouble(new BoundingBox());
             mMapView.getOverlays().add(this.mLocationOverlay);
             //mMapView.getOverlays().add(this.mCompassOverlay);
             //mMapView.getOverlays().add(mScaleBarOverlay);
@@ -125,9 +136,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             currentPoint = mLocationOverlay.getMyLocation();
 
             btnCenterMap = (ImageButton) findViewById(R.id.imgBtn_center_map);
-            btnFollowMe = (ImageButton) findViewById(R.id.imgBtn_follow_me);
+            //btnFollowMe = (ImageButton) findViewById(R.id.imgBtn_follow_me);
             btnCenterMap.setOnClickListener(this);
-            btnFollowMe.setOnClickListener(this);
+            //btnFollowMe.setOnClickListener(this);
         }
     }
 
@@ -145,6 +156,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
         boolean isOneProviderEnabled = startLocationUpdates();
         mLocationOverlay.setEnabled(isOneProviderEnabled);
+
+        System.out.println("Mapview bb: north " + mMapView.getBoundingBox().getLatNorth() +
+                ", east " + mMapView.getBoundingBox().getLonEast() +
+                ", south " + mMapView.getBoundingBox().getLatSouth() +
+                ", west " + mMapView.getBoundingBox().getLonWest());
     }
 
     boolean startLocationUpdates() {
@@ -175,6 +191,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
                             //tell osmdroid to use that provider instead of the default rig which is asserts, cache, files/archives, online
                             mMapView.setTileProvider(tileProvider);
+                            /*minZoom = tileProvider.getMinimumZoomLevel();
+                            maxZoom = tileProvider.getMaximumZoomLevel();
+                            System.out.println("\n Min og maxzoom: " + minZoom + ", " + maxZoom);*/
 
                             //this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
                             //and should be ran asynchronously. we've put it inline for simplicity
@@ -220,18 +239,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 if (currentLocation != null) {
                     GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
                     mMapController.animateTo(myPosition);
-                }
-                break;
-
-            case R.id.imgBtn_follow_me:
-                mTrackingMode = !mTrackingMode;
-
-                if (!mLocationOverlay.isFollowLocationEnabled()) {
-                    mLocationOverlay.enableFollowLocation();
-                    btnFollowMe.setImageResource(R.drawable.ic_follow_me_on);
-                } else {
-                    mLocationOverlay.disableFollowLocation();
-                    btnFollowMe.setImageResource(R.drawable.ic_follow_me);
                 }
                 break;
         }

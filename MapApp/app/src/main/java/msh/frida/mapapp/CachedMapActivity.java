@@ -104,9 +104,9 @@ public class CachedMapActivity extends AppCompatActivity implements LocationList
         mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
         mapController = mMapView.getController();
 
-        // Get the cached map on the phone
+        // Get the cached mMapView on the phone
         getCachedMap();
-        // Choose cached map
+        // Choose cached mMapView
         //getCachedMaps();
 
         final DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
@@ -162,7 +162,7 @@ public class CachedMapActivity extends AppCompatActivity implements LocationList
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            message += "\nStorage access to store map tiles.";
+            message += "\nStorage access to store mMapView tiles.";
         }
         if (!permissions.isEmpty()) {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -185,7 +185,7 @@ public class CachedMapActivity extends AppCompatActivity implements LocationList
                 Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                 if (!storage) {
                     // Permission Denied
-                    Toast.makeText(this, "Storage permission is required to store map tiles to reduce data usage and for offline usage.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Storage permission is required to store mMapView tiles to reduce data usage and for offline usage.", Toast.LENGTH_LONG).show();
                 } // else: permission was granted, yay!
             }
         }

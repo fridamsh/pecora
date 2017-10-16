@@ -44,33 +44,6 @@
             android:textSize="7pt"
             android:layout_gravity="center"/>
 
-        <Button android:id="@+id/btnCachedMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10px"
-            android:text="Se cacha kart"
-            android:layout_centerHorizontal="true"
-            android:textSize="7pt"
-            android:layout_gravity="center"/>
-
-        <Button android:id="@+id/btnTrackingMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10px"
-            android:text="Track rute på kart"
-            android:layout_centerHorizontal="true"
-            android:textSize="7pt"
-            android:layout_gravity="center"/>
-
-        <Button android:id="@+id/btnTracking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10px"
-            android:text="Track rute på kart 2"
-            android:layout_centerHorizontal="true"
-            android:textSize="7pt"
-            android:layout_gravity="center"/>
-
     </LinearLayout>
 
 </RelativeLayout>

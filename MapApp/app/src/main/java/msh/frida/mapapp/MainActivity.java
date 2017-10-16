@@ -33,16 +33,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnNewHike = (Button) findViewById(R.id.btnNewHike);
         btnDownloadMap = (Button) findViewById(R.id.btnDownloadMap);
-        btnCachedMap = (Button) findViewById(R.id.btnCachedMap);
-        btnTrackingMap = (Button) findViewById(R.id.btnTrackingMap);
-        btnTracking = (Button) findViewById(R.id.btnTracking);
+        //btnCachedMap = (Button) findViewById(R.id.btnCachedMap);
+        //btnTrackingMap = (Button) findViewById(R.id.btnTrackingMap);
+        //btnTracking = (Button) findViewById(R.id.btnTracking);
         btnStartNewHike = (Button) findViewById(R.id.btnStartNewHike);
 
         btnNewHike.setOnClickListener(this);
         btnDownloadMap.setOnClickListener(this);
-        btnCachedMap.setOnClickListener(this);
-        btnTrackingMap.setOnClickListener(this);
-        btnTracking.setOnClickListener(this);
+        //btnCachedMap.setOnClickListener(this);
+        //btnTrackingMap.setOnClickListener(this);
+        //btnTracking.setOnClickListener(this);
         btnStartNewHike.setOnClickListener(this);
 
         btnDownloadMap.setEnabled(hasNetworkConnection());
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String message = "OSMDroid permissions:";
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            message += "\nStorage access to store map tiles.";
+            message += "\nStorage access to store mMapView tiles.";
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -83,18 +83,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent2 = new Intent(this, DownloadMapActivity.class);
                 startActivity(intent2);
                 break;
-            case R.id.btnCachedMap:
+            /*case R.id.btnCachedMap:
                 Intent intent3 = new Intent(this, CachedMapActivity.class);
                 startActivity(intent3);
-                break;
+                break;*/
             /*case R.id.btnTrackingMap:
                 Intent intent4 = new Intent(this, MapActivity.class);
                 startActivity(intent4);
                 break;*/
-            case R.id.btnTracking:
+            /*case R.id.btnTracking:
                 Intent intent5 = new Intent(this, TrackingActivity.class);
                 startActivity(intent5);
-                break;
+                break;*/
             case R.id.btnStartNewHike:
                 Intent intent6 = new Intent(this, BeginHikeActivity.class);
                 startActivity(intent6);

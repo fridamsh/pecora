@@ -1,16 +1,16 @@
 package msh.frida.mapapp;
 
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -18,35 +18,30 @@ import android.widget.Toast;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
-import org.osmdroid.tileprovider.modules.IFilesystemCache;
-import org.osmdroid.tileprovider.modules.SqlTileWriter;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.util.BoundingBox;
-import org.osmdroid.views.MapController;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
 import java.util.Locale;
 
-public class DownloadMapActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
+public class DownloadMapActivity extends AppCompatActivity implements View.OnClickListener, Runnable, LocationListener {
 
     private MyLocationNewOverlay mLocationOverlay;
-    private boolean removeFromFileSystem = true;
-    protected MapView map;
+    protected MapView mMapView;
 
-    private CacheManager cacheManager=null;
-    private SqliteArchiveTileWriter writer=null;
-
-    AlertDialog downloadPrompt=null;
-    AlertDialog alertDialog=null;
+    private CacheManager cacheManager = null;
+    private SqliteArchiveTileWriter writer = null;
 
     private ImageButton imgBtnArchive;
+    private ImageButton imgBtnMyLocation;
 
-    //private String mNameOfArchival = "";
-
+    private Location currentLocation = null;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +51,14 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         //important! set your user agent to prevent getting banned from the osm servers
         //Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        map = (MapView) findViewById(R.id.map);
-        map.setClickable(true);
-        map.setMultiTouchControls(true);
-        map.setBuiltInZoomControls(true);
+        mMapView = (MapView) findViewById(R.id.map);
+        mMapView.getController().setZoom(15);
+        mMapView.setMinZoomLevel(6);
+        mMapView.setMaxZoomLevel(17);
+        mMapView.setMultiTouchControls(true);
+        mMapView.setBuiltInZoomControls(true);
+        mMapView.setTilesScaledToDpi(true);
+        mMapView.setFlingEnabled(true);
 
         OnlineTileSourceBase onlineTileSourceBase = new OnlineTileSourceBase(
                 "topo2", 0, 18, 256, "",
@@ -71,38 +70,46 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-        // Sets the tile source to Kartverket's map
-        map.setTileSource(onlineTileSourceBase);
+        // Sets the tile source to Kartverket's mMapView
+        mMapView.setTileSource(onlineTileSourceBase);
 
-        // Get my location to zoom in where you are on the map
-        getMyLocation(map);
+        this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
+        mLocationOverlay.enableMyLocation();
+        mLocationOverlay.enableFollowLocation();
+        mLocationOverlay.setOptionsMenuEnabled(true);
+
+        mMapView.getOverlays().add(mLocationOverlay);
+
+        // Get my location to zoom in where you are on the mMapView
+        //getMyLocation();
 
         // Creating the cache manager here
-        cacheManager = new CacheManager(map);
-        System.out.println("SE HER: " + Configuration.getInstance().getOsmdroidTileCache().getAbsolutePath());
+        cacheManager = new CacheManager(mMapView);
 
         imgBtnArchive = (ImageButton) findViewById(R.id.archiveImgBtn);
+        imgBtnMyLocation = (ImageButton) findViewById(R.id.imgBtnMyLocation);
         imgBtnArchive.setOnClickListener(this);
+        imgBtnMyLocation.setOnClickListener(this);
 
     }
 
-    private void getMyLocation(MapView map) {
-        final MapController mapController = (MapController) map.getController();
+    private void getMyLocation() {
+/*        final MapController mapController = (MapController) mMapView.getController();
 
         mapController.setZoom(14);
 
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
+        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.enableFollowLocation();
         mLocationOverlay.setDrawAccuracyEnabled(true);
 
-        map.getOverlays().add(this.mLocationOverlay);
+        mMapView.getOverlays().add(this.mLocationOverlay);
 
         mLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
                 mapController.animateTo(mLocationOverlay.getMyLocation());
             }
-        });
+        });*/
     }
 
     @Override
@@ -111,19 +118,23 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 /*            case R.id.cacheBtn:
                 cacheBtnClicked();
                 break;
-
             case R.id.clearBtn:
                 new Thread(this).start();
                 break;*/
-
             case R.id.archiveImgBtn:
                 archiveBtnClicked();
+                break;
+            case R.id.imgBtnMyLocation:
+                if (currentLocation != null) {
+                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    mMapView.getController().animateTo(myPosition);
+                }
                 break;
         }
     }
 
     private void startDownload(String downloadName) {
-        System.out.println("\n ARCHIVING STARTED!! \n");
+        System.out.println("\n ARCHIVING START \n");
 
         try {
             // Output name for sqlite file on mobile phone
@@ -131,26 +142,27 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
             writer = new SqliteArchiveTileWriter(outputName);
 
-            cacheManager = new CacheManager(map, writer);
+            cacheManager = new CacheManager(mMapView, writer);
 
             BoundingBox box = new BoundingBox(
-                    map.getBoundingBox().getLatNorth(),
-                    map.getBoundingBox().getLonEast(),
-                    map.getBoundingBox().getLatSouth(),
-                    map.getBoundingBox().getLonWest());
+                    mMapView.getBoundingBox().getLatNorth(),
+                    mMapView.getBoundingBox().getLonEast(),
+                    mMapView.getBoundingBox().getLatSouth(),
+                    mMapView.getBoundingBox().getLonWest());
 
-            int minZoom = map.getZoomLevel();
+            /*int minZoom = mMapView.getZoomLevel();
             int maxZoom = (minZoom + 2 <= 20) ? minZoom+2 : 20;
             System.out.println("\n MinZoom: " + minZoom + "\n");
-            System.out.println("\n MaxZoom: " + maxZoom + "\n");
+            System.out.println("\n MaxZoom: " + maxZoom + "\n");*/
 
-            //cacheManager.downloadAreaAsync(this, box, 13, 15, new CacheManager.CacheManagerCallback() { ... });
-            cacheManager.downloadAreaAsync(this, box, minZoom, maxZoom, new CacheManager.CacheManagerCallback() {
+            //cacheManager.downloadAreaAsync(this, box, minZoom, maxZoom, new CacheManager.CacheManagerCallback() { ... });
+            cacheManager.downloadAreaAsync(this, box, 14, 16, new CacheManager.CacheManagerCallback() {
                 @Override
                 public void onTaskComplete() {
                     Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
                     if (writer!=null)
                         writer.onDetach();
+                    System.out.println("\n ARCHIVING END \n");
                 }
 
                 @Override
@@ -178,8 +190,6 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("\n ARCHIVING ENNNNNDDDDD!! \n");
     }
 
     private void getMapDownloadName() {
@@ -217,51 +227,6 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         });
 
         builder.show();
-
-        //System.out.println("\n ARCHIVING STARTED!! \n");
-/*        try {
-            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "archiveMap.sqlite";
-            writer = new SqliteArchiveTileWriter(outputName);
-            cacheManager = new CacheManager(map, writer);
-            BoundingBox box = new BoundingBox(
-                    map.getBoundingBox().getLatNorth(),
-                    map.getBoundingBox().getLonEast(),
-                    map.getBoundingBox().getLatSouth(),
-                    map.getBoundingBox().getLonWest());
-            cacheManager.downloadAreaAsync(this, box, 13, 15, new CacheManager.CacheManagerCallback() {
-                @Override
-                public void onTaskComplete() {
-                    Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
-                    if (writer!=null)
-                        writer.onDetach();
-                }
-
-                @Override
-                public void onTaskFailed(int errors) {
-                    Toast.makeText(getApplicationContext(), "Download complete with " + errors + " errors", Toast.LENGTH_LONG).show();
-                    if (writer!=null)
-                        writer.onDetach();
-                }
-
-                @Override
-                public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                    // NOOP since we are using the build in UI
-                }
-
-                @Override
-                public void downloadStarted() {
-                    // NOOP since we are using the build in UI
-                }
-
-                @Override
-                public void setPossibleTilesInArea(int total) {
-                    // NOOP since we are using the build in UI
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        //System.out.println("\n ARCHIVING ENNNNNDDDDD!! \n");
     }
 
     private void archiveBtnClicked() {
@@ -270,124 +235,18 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         alertDialog.setMessage("Er du sikker på at du vil laste ned dette området?");
         alertDialog.setPositiveButton("Ja", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
-                System.out.println("\n USER CLICKED YESS !! \n");
+                System.out.println("\n USER CLICKED YES \n");
                 getMapDownloadName();
             }
         });
-        alertDialog.setNegativeButton("Nei", new DialogInterface.OnClickListener(){
+        alertDialog.setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
-                System.out.println("\n USER CLICKED NO !! \n");
+                System.out.println("\n USER CLICKED NO \n");
                 dialog.cancel();
             }
         });
         AlertDialog alert = alertDialog.create();
         alert.show();
-
-        /*System.out.println("\n ARCHIVE BUTTON CLICKED!! \n");
-        try {
-            String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + "archiveMap.sqlite";
-            writer = new SqliteArchiveTileWriter(outputName);
-            cacheManager = new CacheManager(map, writer);
-            BoundingBox box = new BoundingBox(
-                    map.getBoundingBox().getLatNorth(),
-                    map.getBoundingBox().getLonEast(),
-                    map.getBoundingBox().getLatSouth(),
-                    map.getBoundingBox().getLonWest());
-            cacheManager.downloadAreaAsync(this, box, 13, 15, new CacheManager.CacheManagerCallback() {
-                @Override
-                public void onTaskComplete() {
-                    Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
-                    if (writer!=null)
-                        writer.onDetach();
-                }
-
-                @Override
-                public void onTaskFailed(int errors) {
-                    Toast.makeText(getApplicationContext(), "Download complete with " + errors + " errors", Toast.LENGTH_LONG).show();
-                    if (writer!=null)
-                        writer.onDetach();
-                }
-
-                @Override
-                public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                    // NOOP since we are using the build in UI
-                }
-
-                @Override
-                public void downloadStarted() {
-                    // NOOP since we are using the build in UI
-                }
-
-                @Override
-                public void setPossibleTilesInArea(int total) {
-                    // NOOP since we are using the build in UI
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("\n ARCHIVE BUTTON CLICKED ENNNNNDDDDD \n!!");*/
-    }
-
-    private void cacheBtnClicked() {
-        System.out.println("Current cache in use: " + cacheManager.currentCacheUsage());
-
-        BoundingBox box = new BoundingBox(
-                map.getBoundingBox().getLatNorth(),
-                map.getBoundingBox().getLonEast(),
-                map.getBoundingBox().getLatSouth(),
-                map.getBoundingBox().getLonWest());
-
-        System.out.println("SE HER: Bounding box nord: " + map.getBoundingBox().getLatNorth() +
-                "\nøst: " + map.getBoundingBox().getLonEast() +
-                "\nsør: " + map.getBoundingBox().getLatSouth() +
-                "\nvest: " + map.getBoundingBox().getLonWest());
-
-        System.out.println("Possible tiles in area: " + cacheManager.possibleTilesInArea(box, 13, 15));
-
-        // Download async
-        cacheManager.downloadAreaAsync(this, box, 13, 15, new CacheManager.CacheManagerCallback() {
-            @Override
-            public void onTaskComplete() {
-                Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onTaskFailed(int errors) {
-                Toast.makeText(getApplicationContext(), "Download complete with " + errors + " errors.", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                // Using built in UI?
-            }
-
-            @Override
-            public void downloadStarted() {
-                // Using built in UI?
-            }
-
-            @Override
-            public void setPossibleTilesInArea(int total) {
-                // Using built in UI?
-            }
-        });
-
-        //System.out.println("Current cache in use: " + cacheManager.currentCacheUsage());
-
-        /*final IFilesystemCache tileWriter = map.getTileProvider().getTileWriter();
-        if (tileWriter instanceof SqlTileWriter) {
-            final int[] b = ((SqlTileWriter) tileWriter).importFromFileCache(removeFromFileSystem);
-            if (this != null) {
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Cache Import success/failures/default/failres " + b[0] + "/" + b[1] + "/" + b[2] + "/" + b[3], Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }*/
-
     }
 
     /*private void clearCache() {
@@ -406,7 +265,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void run() {
-        IFilesystemCache tileWriter = map.getTileProvider().getTileWriter();
+/*        IFilesystemCache tileWriter = mMapView.getTileProvider().getTileWriter();
         if (tileWriter instanceof SqlTileWriter) {
             final boolean b = ((SqlTileWriter) tileWriter).purgeCache();
             if (this != null) {
@@ -423,6 +282,26 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
             }
-        }
+        }*/
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
