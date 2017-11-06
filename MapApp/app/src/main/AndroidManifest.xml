@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -66,13 +67,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="msh.frida.mapapp.MainActivity" />
         </activity>
-        <activity android:name=".BeginHikeActivity"
+        <activity
+            android:name=".BeginHikeActivity"
             android:label="@string/begin_hike_activity_name"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="msh.frida.mapapp.MainActivity" />
-            </activity>
+        </activity>
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/history_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

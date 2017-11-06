@@ -149,6 +149,8 @@ public class CachedMapActivity extends AppCompatActivity implements LocationList
 
         currentPoint = mLocationOverlay.getMyLocation();
 
+        System.out.println("\n OnCreate() finished \n");
+
     }
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;

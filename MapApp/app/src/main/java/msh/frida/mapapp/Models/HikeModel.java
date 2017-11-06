@@ -1,5 +1,8 @@
 package msh.frida.mapapp.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -7,16 +10,36 @@ import java.util.Date;
  * Created by Frida on 11/10/2017.
  */
 
-public class HikeModel {
+public class HikeModel implements Parcelable {
 
     private String title;
     private String name;
     private int numberOfParticipants;
     private String weatherState;
     private String description;
-    private Calendar dateStart;
-    private Calendar dateEnd;
+    private long dateStart;
+    private long dateEnd;
     private String mapFile;
+
+    public HikeModel() {}
+
+    public HikeModel(String title, String name, String weatherState) {
+        this.title = title;
+        this.name = name;
+        this.weatherState = weatherState;
+    }
+
+    // constructor that takes a Parcel and gives you an object populated with it's values
+    public HikeModel(Parcel in) {
+        title = in.readString();
+        name = in.readString();
+        numberOfParticipants = in.readInt();
+        weatherState = in.readString();
+        description = in.readString();
+        mapFile = in.readString();
+        dateStart = in.readLong();
+        dateEnd = in.readLong();
+    }
 
     public String getTitle() {
         return title;
@@ -58,27 +81,56 @@ public class HikeModel {
         this.description = description;
     }
 
-    public Calendar getDateStart() {
+    public long getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(Calendar dateStart) {
+    public void setDateStart(long dateStart) {
         this.dateStart = dateStart;
     }
 
-    public Calendar getDateEnd() {
+    public long getDateEnd() {
         return dateEnd;
     }
 
-    public void setDateEnd(Calendar dateEnd) {
+    public void setDateEnd(long dateEnd) {
         this.dateEnd = dateEnd;
     }
 
-    public String getMapFile() {
+    public String getMapFileName() {
         return mapFile;
     }
 
-    public void setMapFile(String mapFile) {
+    public void setMapFileName(String mapFile) {
         this.mapFile = mapFile;
     }
+
+    // ---------- Parcelable stuff ----------
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(name);
+        dest.writeInt(numberOfParticipants);
+        dest.writeString(weatherState);
+        dest.writeString(description);
+        dest.writeString(mapFile);
+        dest.writeLong(dateStart);
+        dest.writeLong(dateEnd);
+    }
+
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<HikeModel> CREATOR = new Parcelable.Creator<HikeModel>() {
+        public HikeModel createFromParcel(Parcel in) {
+            return new HikeModel(in);
+        }
+
+        public HikeModel[] newArray(int size) {
+            return new HikeModel[size];
+        }
+    };
 }

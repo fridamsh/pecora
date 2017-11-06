@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="80dp"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="6dip"
+        android:contentDescription="TODO"
+        android:src="@drawable/icon_history_2" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="02/11/2017"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/label2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tur torsdag morgen"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/label3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Varighet: 41:21"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <!--<TableLayout
+        android:id="@+id/tableLayout_history_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:stretchColumns="0,1,2">
+
+        <TableRow>
+            <TextView
+                android:id="@+id/label"
+                android:layout_column="0"
+                android:text="02/11/2017"
+                android:textSize="12sp"
+                android:layout_span="3" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/label2"
+                android:layout_column="0"
+                android:text="Tur torsdag morgen"
+                android:layout_span="3"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlack"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/label3"
+                android:layout_column="0"
+                android:text="Varighet: 41:21"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/label4"
+                android:layout_column="1"
+                android:text="Vær: Fint"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/label5"
+                android:layout_column="2"
+                android:text="Gjeter: Frida"
+                android:textSize="12sp"/>
+        </TableRow>
+    </TableLayout>-->
+
+<!--    <TextView
+        android:id="@+id/secondLine"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/icon"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:text="Description"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/firstLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/secondLine"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:text="Example application"
+        android:textSize="16sp" />-->
+
+</RelativeLayout>

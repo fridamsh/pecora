@@ -1,18 +1,29 @@
 package msh.frida.mapapp;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.constraint.solver.widgets.Rectangle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.osmdroid.config.Configuration;
@@ -23,7 +34,7 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -42,6 +53,10 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
     private ImageButton imgBtnMyLocation;
 
     private Location currentLocation = null;
+    private Location lastKnownLocation;
+    private LocationManager mLocationManager;
+
+    private boolean animateToLocation;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +65,9 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         //Context ctx = getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         //Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
 
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.getController().setZoom(15);
@@ -73,18 +91,22 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         // Sets the tile source to Kartverket's mMapView
         mMapView.setTileSource(onlineTileSourceBase);
 
-        this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
-        mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
-        mLocationOverlay.setOptionsMenuEnabled(true);
+        cacheManager = new CacheManager(mMapView);
 
+        GpsMyLocationProvider provider = new GpsMyLocationProvider(this);
+        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+        this.mLocationOverlay = new MyLocationNewOverlay(provider, mMapView);
+        mLocationOverlay.enableMyLocation();
+        //mLocationOverlay.enableFollowLocation();
         mMapView.getOverlays().add(mLocationOverlay);
 
-        // Get my location to zoom in where you are on the mMapView
-        //getMyLocation();
-
-        // Creating the cache manager here
-        cacheManager = new CacheManager(mMapView);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                mMapView.getController().animateTo(new GeoPoint(lastKnownLocation));
+                //onLocationChanged(lastKnownLocation);
+            }
+        }
 
         imgBtnArchive = (ImageButton) findViewById(R.id.archiveImgBtn);
         imgBtnMyLocation = (ImageButton) findViewById(R.id.imgBtnMyLocation);
@@ -103,13 +125,13 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         mLocationOverlay.enableFollowLocation();
         mLocationOverlay.setDrawAccuracyEnabled(true);
 
-        mMapView.getOverlays().add(this.mLocationOverlay);
+        mMapView.getOverlays().add(this.mLocationOverlay);*/
 
         mLocationOverlay.runOnFirstFix(new Runnable() {
             public void run() {
-                mapController.animateTo(mLocationOverlay.getMyLocation());
+                mMapView.getController().animateTo(mLocationOverlay.getMyLocation());
             }
-        });*/
+        });
     }
 
     @Override
@@ -126,7 +148,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.imgBtnMyLocation:
                 if (currentLocation != null) {
-                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    GeoPoint myPosition = new GeoPoint(currentLocation);
                     mMapView.getController().animateTo(myPosition);
                 }
                 break;
@@ -141,7 +163,6 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + downloadName + ".sqlite";
 
             writer = new SqliteArchiveTileWriter(outputName);
-
             cacheManager = new CacheManager(mMapView, writer);
 
             BoundingBox box = new BoundingBox(
@@ -253,13 +274,67 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         new Thread(this).start();
     }*/
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
+
+        boolean isOneProviderEnabled = startLocationUpdates();
+        mLocationOverlay.setEnabled(isOneProviderEnabled);
+
+        animateToLocation = true;
+
+        //mLocationOverlay.enableFollowLocation();
+        //mLocationOverlay.enableMyLocation();
+
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+    }
+
+
+    boolean startLocationUpdates() {
+        boolean result = false;
+        for (final String provider : mLocationManager.getProviders(true)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(provider, 5000, 0, this);
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public void onPause() {
+        super.onPause();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+        }
+
+        mLocationOverlay.disableFollowLocation();
+        mLocationOverlay.disableMyLocation();
+
+        animateToLocation = false;
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 
 
@@ -287,6 +362,11 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onLocationChanged(Location location) {
+        if (animateToLocation) {
+            mMapView.getController().animateTo(new GeoPoint(location));
+            animateToLocation = false;
+            System.out.println("Animate to location = " + animateToLocation);
+        }
         currentLocation = location;
     }
 
