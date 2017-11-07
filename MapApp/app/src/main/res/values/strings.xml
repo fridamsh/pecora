@@ -6,6 +6,8 @@
     <string name="map_activity_name">Spor rute</string>
     <string name="begin_hike_activity_name">Start ny oppsynstur</string>
     <string name="history_activity_name">Historikk</string>
+    <string name="history_item_activity_name">Historikk</string>
+    <string name="hike_summary_activity_name">Oppsummering</string>
 
     <string name="bt_center_map_description">Center on my location</string>
     <string name="bt_follow_me_description">Follow me</string>

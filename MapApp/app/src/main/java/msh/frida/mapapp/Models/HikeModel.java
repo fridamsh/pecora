@@ -3,15 +3,21 @@ package msh.frida.mapapp.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polyline;
+
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Frida on 11/10/2017.
  */
 
-public class HikeModel implements Parcelable {
+public class HikeModel implements Parcelable, Serializable {
 
+    private int id;
     private String title;
     private String name;
     private int numberOfParticipants;
@@ -19,8 +25,12 @@ public class HikeModel implements Parcelable {
     private String description;
     private long dateStart;
     private long dateEnd;
-    private String mapFile;
+    private String mapFileName;
+    private List<ObservationPoint> observationPoints;
+    private transient Polyline track;
+    private List<GeoPoint> trackPoints;
 
+    // Empty constructor
     public HikeModel() {}
 
     public HikeModel(String title, String name, String weatherState) {
@@ -29,16 +39,49 @@ public class HikeModel implements Parcelable {
         this.weatherState = weatherState;
     }
 
-    // constructor that takes a Parcel and gives you an object populated with it's values
+    // Constructor
+    public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart, long dateEnd, String mapFile) {
+        this.id = id;
+        this.title = title;
+        this.name = name;
+        this.numberOfParticipants = numberOfParticipants;
+        this.weatherState = weatherState;
+        this.description = description;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.mapFileName = mapFile;
+    }
+
+    // Constructor
+    public HikeModel(String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart, long dateEnd, String mapFile) {
+        this.title = title;
+        this.name = name;
+        this.numberOfParticipants = numberOfParticipants;
+        this.weatherState = weatherState;
+        this.description = description;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.mapFileName = mapFile;
+    }
+
+    // Constructor that takes a Parcel and gives you an object populated with it's values
     public HikeModel(Parcel in) {
         title = in.readString();
         name = in.readString();
         numberOfParticipants = in.readInt();
         weatherState = in.readString();
         description = in.readString();
-        mapFile = in.readString();
+        mapFileName = in.readString();
         dateStart = in.readLong();
         dateEnd = in.readLong();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -98,11 +141,35 @@ public class HikeModel implements Parcelable {
     }
 
     public String getMapFileName() {
-        return mapFile;
+        return mapFileName;
     }
 
-    public void setMapFileName(String mapFile) {
-        this.mapFile = mapFile;
+    public void setMapFileName(String mapFileName) {
+        this.mapFileName = mapFileName;
+    }
+
+    public List<ObservationPoint> getObservationPoints() {
+        return observationPoints;
+    }
+
+    public void setObservationPoints(List<ObservationPoint> observationPoints) {
+        this.observationPoints = observationPoints;
+    }
+
+    public Polyline getTrack() {
+        return track;
+    }
+
+    public void setTrack(Polyline track) {
+        this.track = track;
+    }
+
+    public List<GeoPoint> getTrackPoints() {
+        return trackPoints;
+    }
+
+    public void setTrackPoints(List<GeoPoint> trackPoints) {
+        this.trackPoints = trackPoints;
     }
 
     // ---------- Parcelable stuff ----------
@@ -118,7 +185,7 @@ public class HikeModel implements Parcelable {
         dest.writeInt(numberOfParticipants);
         dest.writeString(weatherState);
         dest.writeString(description);
-        dest.writeString(mapFile);
+        dest.writeString(mapFileName);
         dest.writeLong(dateStart);
         dest.writeLong(dateEnd);
     }

@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -32,7 +31,7 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vis mer"
+            android:text="Mer"
             android:textStyle="italic"
             android:textSize="8pt"
             android:clickable="true"/>
@@ -129,7 +128,8 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Hvordan er sauen skadet"/>
+            android:hint="Hvordan er sauen skadet"
+            android:inputType="textCapSentences"/>
     </LinearLayout>
 
     <LinearLayout
@@ -150,12 +150,14 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Detaljer"/>
+            android:hint="Detaljer"
+            android:inputType="textCapSentences"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
         <CheckBox
             android:id="@+id/checkBox_predator"
@@ -170,7 +172,8 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Hvordan rovdyr"/>
+            android:hint="Hvordan rovdyr"
+            android:inputType="textCapSentences"/>
     </LinearLayout>
 
 

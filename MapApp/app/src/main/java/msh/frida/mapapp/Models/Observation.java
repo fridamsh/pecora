@@ -11,29 +11,18 @@ public class Observation {
     private GeoPoint location;
     private String typeOfObservation;
     private String details;
-    private ObservationPoint parentPoint;
-    private GeoPoint parentGeoPoint;
 
-    public Observation(GeoPoint location, GeoPoint parentPoint) {
+    public Observation(GeoPoint location) {
         this.location = location;
-        this.parentGeoPoint = parentPoint;
     }
 
     public GeoPoint getLocation() {
         return location;
     }
 
-    public void setLocation(GeoPoint location) {
+    /*public void setLocation(GeoPoint location) {
         this.location = location;
-    }
-
-    public ObservationPoint getObservationPoint() {
-        return parentPoint;
-    }
-
-    public void setObservationPoint(ObservationPoint parentPoint) {
-        this.parentPoint = parentPoint;
-    }
+    }*/
 
     public String getTypeOfObservation() {
         return typeOfObservation;

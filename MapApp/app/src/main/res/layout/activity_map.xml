@@ -34,7 +34,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:background="#00ffffff"
-        android:contentDescription="@string/bt_center_map_description"
+        android:contentDescription=""
         android:cropToPadding="true" />
 
     <ImageButton
@@ -48,23 +48,20 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:background="#00ffffff"
-        android:contentDescription="@string/bt_center_map_description"
-        android:cropToPadding="true" />
+        android:contentDescription=""
+        android:cropToPadding="true"
+        android:visibility="gone"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgBtn_done"
-        android:src="@drawable/icon_done"
-        android:layout_below="@+id/imgBtn_new_observation"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
+        android:id="@+id/imgBtn_stop_hike"
+        android:src="@drawable/icon_stop_hike"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
         android:background="#00ffffff"
-        android:contentDescription="@string/bt_center_map_description"
-        android:cropToPadding="true"
-        android:visibility="invisible"/>
+        android:cropToPadding="true" />
 
     <ImageView
         android:layout_width="wrap_content"

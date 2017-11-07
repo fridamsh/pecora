@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnDownloadMap.setEnabled(hasNetworkConnection());
 
         checkPermissions();
+
+        /*SQLiteDatabase pecoraDatabase = openOrCreateDatabase("Pecora Database", MODE_PRIVATE, null);
+        pecoraDatabase.execSQL("CREATE TABLE IF NOT EXISTS Hike(Title VARCHAR, Name VARCHAR, Name VARCHAR, Participants INT, Weather VARCHAR, Description VARCHAR, Start LONG, End LONG, Mapfile VARCHAR);");*/
     }
 
     @Override

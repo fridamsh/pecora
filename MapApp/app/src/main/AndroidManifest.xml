@@ -28,14 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HikeActivity"
-            android:label="@string/hike_activity_name"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="msh.frida.mapapp.MainActivity" />
-        </activity>
-        <activity
             android:name=".DownloadMapActivity"
             android:label="@string/download_map_activity_name"
             android:screenOrientation="portrait">
@@ -44,23 +36,7 @@
                 android:value="msh.frida.mapapp.MainActivity" />
         </activity>
         <activity
-            android:name=".CachedMapActivity"
-            android:label="@string/cached_map_activity_name"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="msh.frida.mapapp.MainActivity" />
-        </activity>
-        <activity
             android:name=".MapActivity"
-            android:label="@string/map_activity_name"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="msh.frida.mapapp.MainActivity" />
-        </activity>
-        <activity
-            android:name=".TrackingActivity"
             android:label="@string/map_activity_name"
             android:screenOrientation="portrait">
             <meta-data
@@ -78,6 +54,22 @@
         <activity
             android:name=".HistoryActivity"
             android:label="@string/history_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".HistoryItemActivity"
+            android:label="@string/history_item_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".HikeSummaryActivity"
+            android:label="@string/hike_summary_activity_name"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

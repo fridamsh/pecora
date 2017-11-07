@@ -171,7 +171,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
 
                 Intent intent1 = new Intent(this, MapActivity.class);
                 //intent1.putExtra("file", chosenFileName);
-                intent1.putExtra("hikeObject", hike);
+                intent1.putExtra("hikeObject", (Parcelable) hike);
                 startActivity(intent1);
                 break;
         }
@@ -216,7 +216,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
         } else if (Integer.parseInt(hour) >= 12 && Integer.parseInt(hour) < 18) {
             title += "ettermiddag";
         } else if (Integer.parseInt(hour) >= 18 && Integer.parseInt(hour) <= 23) {
-            title += "ettermiddag";
+            title += "kveld";
         } else if (Integer.parseInt(hour) >= 0 && Integer.parseInt(hour) <= 6) {
             title += "natt";
         }

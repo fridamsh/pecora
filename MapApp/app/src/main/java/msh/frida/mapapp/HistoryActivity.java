@@ -11,18 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msh.frida.mapapp.Models.HikeModel;
+import msh.frida.mapapp.Other.DatabaseHandler;
 import msh.frida.mapapp.Other.SimpleArrayAdapter;
 
 public class HistoryActivity extends AppCompatActivity {
 
     private ListView listView;
+    private DatabaseHandler db;
+    //private HikeModel hikeModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        SimpleArrayAdapter adapter = new SimpleArrayAdapter(this, getHikeModel());
+        // Initialize db
+        db = new DatabaseHandler(this);
+
+        SimpleArrayAdapter adapter = new SimpleArrayAdapter(this, getHikesFromDb());
 
         listView = (ListView) findViewById(R.id.hike_list);
         listView.setAdapter(adapter);
@@ -35,8 +41,15 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     // For testing
+    private List<HikeModel> getHikesFromDb() {
+        List<HikeModel> list = db.getAllHikes();
+        return list;
+    }
+
+    // For testing
     private List<HikeModel> getHikeModel() {
         List<HikeModel> list = new ArrayList<>();
+        //list.add(hikeModel);
         list.add(get("Tur torsdag ettermiddag", "Frida", "Regn"));
         list.add(get("Tur fredag kveld", "Frida", "Overskyet"));
         list.add(get("Tur lørdag morgen", "Frida", "Sol"));

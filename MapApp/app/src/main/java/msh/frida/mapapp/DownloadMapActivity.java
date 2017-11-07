@@ -62,12 +62,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_map);
 
-        //Context ctx = getApplicationContext();
-        //important! set your user agent to prevent getting banned from the osm servers
-        //Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
 
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.getController().setZoom(15);

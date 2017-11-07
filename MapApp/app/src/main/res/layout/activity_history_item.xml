@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="30px">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Historikk"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="0px"
+        android:textSize="17sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/textView_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="0px"
+        android:textSize="19sp"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/colorBlack"/>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:stretchColumns="1">
+        <TableRow
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Navn"
+                android:paddingBottom="0px"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/textView_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:paddingBottom="0px"
+                android:textSize="17sp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Starttid"
+                android:paddingBottom="0px"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/textView_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:paddingBottom="0px"
+                android:textSize="17sp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Sluttid"
+                android:paddingBottom="0px"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/textView_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:paddingBottom="0px"
+                android:textSize="17sp"/>
+        </TableRow>
+
+    </TableLayout>
+
+
+
+</LinearLayout>
