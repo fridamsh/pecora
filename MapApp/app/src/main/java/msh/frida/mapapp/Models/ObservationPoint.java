@@ -13,6 +13,7 @@ public class ObservationPoint {
 
 
     private GeoPoint location;
+    private long timeOfObservation;
     private List<Observation> observationList;
 
     public ObservationPoint(GeoPoint location) {
@@ -27,6 +28,14 @@ public class ObservationPoint {
     /*public void setLocation(GeoPoint location) {
         this.location = location;
     }*/
+
+    public long getTimeOfObservation() {
+        return timeOfObservation;
+    }
+
+    public void setTimeOfObservation(long timeOfObservation) {
+        this.timeOfObservation = timeOfObservation;
+    }
 
     public List<Observation> getObservationList() {
         return observationList;

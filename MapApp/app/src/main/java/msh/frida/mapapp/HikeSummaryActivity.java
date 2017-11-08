@@ -13,10 +13,6 @@ public class HikeSummaryActivity extends AppCompatActivity {
 
     private TextView tvTitle;
     private TextView tvDuration;
-    /*private TextView tvName;
-    private TextView tvParticipants;
-    private TextView tvWeather;
-    private TextView tvDescription;*/
     private TextView tvStart;
     private TextView tvEnd;
     private TextView tvNumberOfObservations;
@@ -29,8 +25,6 @@ public class HikeSummaryActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         HikeModel hikeModel = extras.getParcelable("hikeModel");
 
-        //System.out.println("Tittel: " + hikeModel.getTitle());
-
         tvTitle = (TextView) findViewById(R.id.textView_title);
         tvTitle.setText(hikeModel.getTitle());
 
@@ -42,18 +36,6 @@ public class HikeSummaryActivity extends AppCompatActivity {
 
         tvEnd = (TextView) findViewById(R.id.textView_end);
         tvEnd.setText(getTime(hikeModel.getDateEnd()));
-
-        /*tvName = (TextView) findViewById(R.id.textView_name);
-        tvName.setText(hikeModel.getName());
-
-        tvParticipants = (TextView) findViewById(R.id.textView_participants);
-        tvParticipants.setText(Integer.toString(hikeModel.getNumberOfParticipants()));
-
-        tvWeather = (TextView) findViewById(R.id.textView_weather);
-        tvWeather.setText(hikeModel.getWeatherState());
-
-        tvDescription = (TextView) findViewById(R.id.textView_description);
-        tvDescription.setText(hikeModel.getDescription());*/
 
         tvNumberOfObservations = (TextView) findViewById(R.id.textView_number_of_observations);
         tvNumberOfObservations.setText("");
@@ -88,11 +70,4 @@ public class HikeSummaryActivity extends AppCompatActivity {
         }
         return duration;
     }
-
-    /*private String getTime2(Long start) {
-        return String.format(("%d min, %d sec",
-                TimeUnit.MILLISECONDS.toMinutes(start),
-                TimeUnit.MILLISECONDS.toSeconds(start) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(start))
-        );
-    }*/
 }

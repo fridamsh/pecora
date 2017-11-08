@@ -36,7 +36,7 @@
                 android:value="msh.frida.mapapp.MainActivity" />
         </activity>
         <activity
-            android:name=".MapActivity"
+            android:name=".HikeActivity"
             android:label="@string/map_activity_name"
             android:screenOrientation="portrait">
             <meta-data
@@ -65,7 +65,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="msh.frida.mapapp.MainActivity" />
+                android:value="msh.frida.mapapp.HistoryActivity" />
         </activity>
         <activity
             android:name=".HikeSummaryActivity"
@@ -74,6 +74,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="msh.frida.mapapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".HistoryItemMapActivity"
+            android:label="@string/history_item_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.HistoryItemActivity" />
         </activity>
     </application>
 

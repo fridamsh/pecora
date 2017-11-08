@@ -27,8 +27,10 @@ public class HikeModel implements Parcelable, Serializable {
     private long dateEnd;
     private String mapFileName;
     private List<ObservationPoint> observationPoints;
+    //private String observationPointsString;
     private transient Polyline track;
     private List<GeoPoint> trackPoints;
+    //private String trackPointsString;
 
     // Empty constructor
     public HikeModel() {}
@@ -40,7 +42,8 @@ public class HikeModel implements Parcelable, Serializable {
     }
 
     // Constructor
-    public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart, long dateEnd, String mapFile) {
+    public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState, String description,
+                     long dateStart, long dateEnd, String mapFile, List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.id = id;
         this.title = title;
         this.name = name;
@@ -50,10 +53,13 @@ public class HikeModel implements Parcelable, Serializable {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.mapFileName = mapFile;
+        this.observationPoints = observationPoints;
+        this.trackPoints = trackPoints;
     }
 
     // Constructor
-    public HikeModel(String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart, long dateEnd, String mapFile) {
+    public HikeModel(String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart,
+                     long dateEnd, String mapFile, List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.title = title;
         this.name = name;
         this.numberOfParticipants = numberOfParticipants;
@@ -62,6 +68,8 @@ public class HikeModel implements Parcelable, Serializable {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.mapFileName = mapFile;
+        this.observationPoints = observationPoints;
+        this.trackPoints = trackPoints;
     }
 
     // Constructor that takes a Parcel and gives you an object populated with it's values

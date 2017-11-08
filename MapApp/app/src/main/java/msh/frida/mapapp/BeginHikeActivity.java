@@ -2,12 +2,10 @@ package msh.frida.mapapp;
 
 import android.content.Intent;
 import android.os.Environment;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,7 +17,6 @@ import org.osmdroid.tileprovider.modules.ArchiveFileFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import msh.frida.mapapp.Models.HikeModel;
@@ -169,7 +166,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                 System.out.println(Calendar.getInstance().getTimeInMillis());
                 // TODO: set DateEnd after ended hike
 
-                Intent intent1 = new Intent(this, MapActivity.class);
+                Intent intent1 = new Intent(this, HikeActivity.class);
                 //intent1.putExtra("file", chosenFileName);
                 intent1.putExtra("hikeObject", (Parcelable) hike);
                 startActivity(intent1);
@@ -183,9 +180,8 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
         String s = c.getTime().toString();
         String[] sArray = s.split(" ");
         String dayName = sArray[0];
-        String time = sArray[3];
-        String[] timeSplit = time.split(":");
-        String hour = timeSplit[0];
+        String[] time = sArray[3].split(":");
+        String hour = time[0];
 
         switch (dayName) {
             case "Mon":

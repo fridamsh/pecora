@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +31,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
@@ -44,14 +44,10 @@ import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -62,14 +58,13 @@ import msh.frida.mapapp.Models.Observation;
 import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
+public class HikeActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
 
     protected MapView mMapView;
     private IMapController mMapController;
     private Context mContext;
     private LocationManager mLocationManager;
     private GpsMyLocationProvider provider;
-    //private MyLocationNewOverlay mLocationOverlay;
     private MyLocationNewOverlay mLocationOverlay;
     private Location currentLocation;
     private Location lastKnownLocation;
@@ -88,7 +83,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private List<ObservationPoint> observationPointsList;
     private List<Observation> observationList;
 
-    //private ImageButton btnFollowMe;
     private ImageButton btnCenterMap;
     private ImageButton btnNewObservationPoint;
     private ImageButton btnNewObservation;
@@ -96,8 +90,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private ImageView imgCross;
     private ImageView imgCrossMarker;
     private TableLayout tblButtons;
-    private Button btnOk;
-    private Button btnCancel;
+    private Button btnObservationOk;
+    private Button btnObservationCancel;
     private FrameLayout frameLayout;
 
     private CheckBox cb1;
@@ -124,10 +118,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_hike);
 
         Bundle extras = getIntent().getExtras();
-        //String fileName = (String) extras.get("file");
         hikeModel = new HikeModel();
         hikeModel = extras.getParcelable("hikeObject");
         String fileName = hikeModel.getMapFileName();
@@ -206,20 +199,23 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             }
 
             btnCenterMap = (ImageButton) findViewById(R.id.imgBtn_center_map);
-            btnNewObservationPoint = (ImageButton) findViewById(R.id.imgBtn_new_point);
-            btnNewObservation = (ImageButton) findViewById(R.id.imgBtn_new_observation);
-            btnStopHike = (ImageButton) findViewById(R.id.imgBtn_stop_hike);
-            btnOk = (Button) findViewById(R.id.btn_ok);
-            btnCancel = (Button) findViewById(R.id.btn_cancel);
-            //btnFollowMe = (ImageButton) findViewById(R.id.imgBtn_follow_me);
             btnCenterMap.setOnClickListener(this);
+
+            btnNewObservationPoint = (ImageButton) findViewById(R.id.imgBtn_new_point);
             btnNewObservationPoint.setOnClickListener(this);
+
+            btnNewObservation = (ImageButton) findViewById(R.id.imgBtn_new_observation);
             btnNewObservation.setOnClickListener(this);
-            //btnDone.setOnClickListener(this);
+
+            btnStopHike = (ImageButton) findViewById(R.id.imgBtn_stop_hike);
             btnStopHike.setOnClickListener(this);
-            btnOk.setOnClickListener(this);
-            btnCancel.setOnClickListener(this);
-            //btnFollowMe.setOnClickListener(this);
+
+            btnObservationOk = (Button) findViewById(R.id.btn_observation_ok);
+            btnObservationOk.setOnClickListener(this);
+
+            btnObservationCancel = (Button) findViewById(R.id.btn_observation_cancel);
+            btnObservationCancel.setOnClickListener(this);
+
             imgCross = (ImageView) findViewById(R.id.img_cross);
             imgCrossMarker = (ImageView) findViewById(R.id.img_marker_cross);
             tblButtons = (TableLayout) findViewById(R.id.table_btns);
@@ -237,8 +233,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onStart() {
         super.onStart();
-
-        //animateToLocation = true;
     }
 
     @Override
@@ -332,7 +326,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                                 this.mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
                             }
 
-                            Toast.makeText(getApplicationContext(), "Using " + list[i].getAbsolutePath() + " " + source, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Using " + list[i].getName(), Toast.LENGTH_SHORT).show();
                             this.mMapView.invalidate();
                             return;
                         } catch (Exception ex) {
@@ -341,9 +335,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             }
-            Toast.makeText(getApplicationContext(), f.getAbsolutePath() + " did not have any files I can open!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), f.getAbsolutePath() + " did not have any files I can open :(", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getApplicationContext(), f.getAbsolutePath() + " dir not found!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), f.getAbsolutePath() + " dir not found :(", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -356,6 +350,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     mMapController.animateTo(myPosition);
                 }
                 break;
+
             case R.id.imgBtn_new_point:
                 if (currentLocation != null) {
                     mObservationPointMode = !mObservationPointMode;
@@ -363,111 +358,96 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     if (mObservationPointMode) {
                         btnNewObservationPoint.setImageResource(R.drawable.icon_new_red);
                         btnNewObservation.setVisibility(View.VISIBLE);
-                        GeoPoint observationPoint = new GeoPoint(currentLocation);
-                        observationPoints.add(observationPoint);
+
+                        GeoPoint observationPointLocation = new GeoPoint(currentLocation);
+                        observationPoints.add(observationPointLocation);
                         // New observation point, clear it if it exists
-                        currentObservationPoint = new ObservationPoint(observationPoint);
-                        //observationPointsList.add(currentObservationPoint);
+                        currentObservationPoint = new ObservationPoint(observationPointLocation);
+                        currentObservationPoint.setTimeOfObservation(Calendar.getInstance().getTimeInMillis());
 
                         Marker observationMarker = new Marker(mMapView);
-                        //Drawable newMarker = this.getResources().getDrawable(R.drawable.icon_marker_green,this);
                         observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_marker_green_small));
-                        observationMarker.setPosition(observationPoint);
+                        observationMarker.setPosition(observationPointLocation);
                         observationMarker.setTitle("Observation Point " + observationPoints.size());
-                        mMapView.getOverlays().add(observationMarker);
+                        mMapView.getOverlays().add(0, observationMarker);
                         mMapView.invalidate();
                     }
                     else {
                         btnNewObservationPoint.setImageResource(R.drawable.icon_new);
                         btnNewObservation.setVisibility(View.GONE);
-                        // Now the observation point mode is turned off, and we can add the observation point
+
+                        // Observation point mode is turned off, and we can now add the observation point
+                        // since observations has been added to this observation point
                         observationPointsList.add(currentObservationPoint);
                     }
                 }
-
                 break;
-            case R.id.imgBtn_new_observation:
-                mObservationMode = !mObservationMode;
 
-                if (mObservationPointMode) {
+            case R.id.imgBtn_new_observation:
+                System.out.println("New observation");
+                // Show you're in observation mode by showing and hiding drawables
+                imgCross.setVisibility(View.VISIBLE);
+                imgCrossMarker.setVisibility(View.VISIBLE);
+                tblButtons.setVisibility(View.VISIBLE);
+                frameLayout.setVisibility(View.VISIBLE);
+                // Hide other stuff to not interrupt
+                btnCenterMap.setVisibility(View.INVISIBLE);
+                btnNewObservationPoint.setVisibility(View.INVISIBLE);
+                btnNewObservation.setVisibility(View.INVISIBLE);
+                mMapView.setBuiltInZoomControls(false);
+
+                //mObservationMode = !mObservationMode;
+                /*if (mObservationPointMode) {
                     if (mObservationMode)
                     {
                         System.out.println("New observation");
-                        btnNewObservation.setImageResource(R.drawable.icon_sheep_red);
-                        //letUserPickPointOfObservation();
+                        // Show you're in observation mode by showing and hiding drawables
                         imgCross.setVisibility(View.VISIBLE);
                         imgCrossMarker.setVisibility(View.VISIBLE);
                         tblButtons.setVisibility(View.VISIBLE);
                         frameLayout.setVisibility(View.VISIBLE);
-                        //btnDone.setVisibility(View.VISIBLE);
-
+                        // Hide other stuff to not interrupt
                         btnCenterMap.setVisibility(View.INVISIBLE);
                         btnNewObservationPoint.setVisibility(View.INVISIBLE);
                         btnNewObservation.setVisibility(View.INVISIBLE);
-
                         mMapView.setBuiltInZoomControls(false);
                     }
                     else {
-                        // TODO: ?
+                        // TODO: I don't know?
                     }
 
                 }
                 else {
                     System.out.println("Not in observation mode");
                     mObservationMode = false;
-                }
+                }*/
                 break;
-            case R.id.btn_ok:
+
+            case R.id.btn_observation_ok:
                 // Get observation information
                 getObservationInformationFromUser();
 
-                /*// Update the map with marker
-                GeoPoint p = (GeoPoint) mMapView.getMapCenter();
-                observations.add(p);
-                Marker observationMarker = new Marker(mMapView);
-                observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_marker_orange_small));
-                observationMarker.setPosition(p);
-                observationMarker.setTitle("Observation " + observations.size());
-                mMapView.getOverlays().add(observationMarker);
-                mMapView.invalidate();
-
-                imgCross.setVisibility(View.INVISIBLE);
-                imgCrossMarker.setVisibility(View.INVISIBLE);
-                tblButtons.setVisibility(View.INVISIBLE);
-                frameLayout.setVisibility(View.INVISIBLE);
-                //btnDone.setVisibility(View.INVISIBLE);
-
-                btnNewObservation.setImageResource(R.drawable.icon_sheep);
-                btnCenterMap.setVisibility(View.VISIBLE);
-                btnNewObservationPoint.setVisibility(View.VISIBLE);
-                btnNewObservation.setVisibility(View.VISIBLE);*/
-
-
-                mObservationMode = false;
-
+                //mObservationMode = false;
                 mMapView.setBuiltInZoomControls(true);
-
                 break;
-            case R.id.btn_cancel:
+
+            case R.id.btn_observation_cancel:
                 // Make observation objects invisible
                 imgCross.setVisibility(View.INVISIBLE);
                 imgCrossMarker.setVisibility(View.INVISIBLE);
                 tblButtons.setVisibility(View.INVISIBLE);
                 frameLayout.setVisibility(View.INVISIBLE);
-                //btnDone.setVisibility(View.INVISIBLE);
-
-                btnNewObservation.setImageResource(R.drawable.icon_sheep);
+                //btnNewObservation.setImageResource(R.drawable.icon_sheep);
 
                 // Make objects visible again
                 btnCenterMap.setVisibility(View.VISIBLE);
                 btnNewObservationPoint.setVisibility(View.VISIBLE);
                 btnNewObservation.setVisibility(View.VISIBLE);
 
-                mObservationMode = false;
-
+                //mObservationMode = false;
                 mMapView.setBuiltInZoomControls(true);
-
                 break;
+
             case R.id.imgBtn_stop_hike:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Avslutt tur");
@@ -504,23 +484,21 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         hikeModel.setTrackPoints(track.getPoints());
         hikeModel.setDateEnd(Calendar.getInstance().getTimeInMillis());
 
-        /*DatabaseHandler db = new DatabaseHandler(this);
+        // Save trip to database
+        DatabaseHandler db = new DatabaseHandler(this);
         db.addHike(hikeModel);
-        Toast.makeText(getApplicationContext(), "Added hike to SQLite DB", Toast.LENGTH_SHORT).show();*/
+        db.close();
+        Toast.makeText(getApplicationContext(), "Added hike to SQLite DB", Toast.LENGTH_SHORT).show();
 
         Intent intent1 = new Intent(this, HikeSummaryActivity.class);
         intent1.putExtra("hikeModel", (Parcelable) hikeModel);
         startActivity(intent1);
     }
 
-    private boolean isCb1Checked;
-    private boolean isCb2Checked;
-    private boolean isCb3Checked;
-    private boolean isCb4Checked;
     private boolean isTw1Clicked;
-    private String spinnerWhite = "0";
-    private String spinnerBlack = "0";
-    private String spinnerMix = "0";
+    private String spinnerWhite;
+    private String spinnerBlack;
+    private String spinnerMix;
 
     private void getObservationInformationFromUser() {
         AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
@@ -533,8 +511,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         cb1 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_sheep);
         cb1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isCb1Checked = !isCb1Checked;
-                if (isCb1Checked) {
+                if (cb1.isChecked()) {
                     et1.setVisibility(View.VISIBLE);
                     tw1.setVisibility(View.VISIBLE);
                 }
@@ -564,8 +541,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         cb2 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_hurt_sheep);
         cb2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isCb2Checked = !isCb2Checked;
-                if (isCb2Checked) {
+                if (cb2.isChecked()) {
                     et2.setVisibility(View.VISIBLE);
                 }
                 else {
@@ -577,8 +553,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         cb3 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_dead_sheep);
         cb3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isCb3Checked = !isCb3Checked;
-                if (isCb3Checked) {
+                if (cb3.isChecked()) {
                     et3.setVisibility(View.VISIBLE);
                 }
                 else {
@@ -590,8 +565,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         cb4 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_predator);
         cb4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isCb4Checked = !isCb4Checked;
-                if (isCb4Checked) {
+                if (cb4.isChecked()) {
                     et4.setVisibility(View.VISIBLE);
                 }
                 else {
@@ -600,9 +574,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             }
         });
         et4 = (EditText) checkboxLayout.findViewById(R.id.editText_predator);
+
         sp1 = (Spinner) checkboxLayout.findViewById(R.id.spinner_white_sheep);
         sp2 = (Spinner) checkboxLayout.findViewById(R.id.spinner_black_sheep);
         sp3 = (Spinner) checkboxLayout.findViewById(R.id.spinner_mix_sheep);
+
+        spinnerWhite = "0";
+        spinnerBlack = "0";
+        spinnerMix = "0";
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.number_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -635,23 +614,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         helpBuilder.setPositiveButton("Ok",
         new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-
                 GeoPoint observationLocation = (GeoPoint) mMapView.getMapCenter();
                 observations.add(observationLocation);
                 currentObservation = new Observation(observationLocation);
-
-                if (currentPoint != null) {
-                    Polyline line = new Polyline();
-                    line.setWidth(3f);
-                    line.setColor(Color.BLUE);
-                    line.setGeodesic(true);
-                    ArrayList<GeoPoint> points = new ArrayList<>();
-                    points.add(currentPoint);
-                    points.add(observationLocation);
-                    line.setPoints(points);
-                    mMapView.getOverlays().add(0, line);
-                }
-
 
                 // Update the map with marker
                 Marker observationMarker = new Marker(mMapView);
@@ -682,7 +647,20 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     currentObservation.setDetails(et4.getText().toString());
                     observationMarker.setSubDescription("Rovdyr, type: " + et4.getText().toString());
                 }
-                mMapView.getOverlays().add(observationMarker);
+                mMapView.getOverlays().add(0, observationMarker);
+
+                // Draw line from observation point to observation
+                if (currentPoint != null) {
+                    Polyline line = new Polyline();
+                    line.setWidth(3f);
+                    line.setColor(Color.RED);
+                    line.setGeodesic(true);
+                    ArrayList<GeoPoint> points = new ArrayList<>();
+                    points.add(currentPoint);
+                    points.add(observationLocation);
+                    line.setPoints(points);
+                    mMapView.getOverlays().add(0, line);
+                }
 
                 mMapView.invalidate();
 
@@ -690,32 +668,22 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 // Add current observation to list with correct info
                 currentObservationPoint.getObservationList().add(currentObservation);
 
+                // Make drawables visible and invisible again
                 imgCross.setVisibility(View.INVISIBLE);
                 imgCrossMarker.setVisibility(View.INVISIBLE);
                 tblButtons.setVisibility(View.INVISIBLE);
                 frameLayout.setVisibility(View.INVISIBLE);
-                //btnDone.setVisibility(View.INVISIBLE);
-
-                btnNewObservation.setImageResource(R.drawable.icon_sheep);
                 btnCenterMap.setVisibility(View.VISIBLE);
                 btnNewObservationPoint.setVisibility(View.VISIBLE);
                 btnNewObservation.setVisibility(View.VISIBLE);
 
-                // Reset booleans
-                isCb1Checked = false;
+                // Reset text view boolean
                 isTw1Clicked = false;
             }
         });
 
         AlertDialog helpDialog = helpBuilder.create();
         helpDialog.show();
-    }
-
-    private void letUserPickPointOfObservation() {
-        // Do something
-        imgCross.setVisibility(View.VISIBLE);
-
-        //btnNewObservation.setImageResource(R.drawable.icon_sheep);
     }
 
     private void drawTrack(GeoPoint point) {

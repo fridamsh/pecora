@@ -1,18 +1,18 @@
 package msh.frida.mapapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import msh.frida.mapapp.Models.HikeModel;
 import msh.frida.mapapp.Other.DatabaseHandler;
-import msh.frida.mapapp.Other.SimpleArrayAdapter;
+import msh.frida.mapapp.Other.HistoryArrayAdapter;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -28,16 +28,29 @@ public class HistoryActivity extends AppCompatActivity {
         // Initialize db
         db = new DatabaseHandler(this);
 
-        SimpleArrayAdapter adapter = new SimpleArrayAdapter(this, getHikesFromDb());
+        HistoryArrayAdapter adapter = new HistoryArrayAdapter(this, getHikesFromDb());
 
         listView = (ListView) findViewById(R.id.hike_list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
+                int hikeId = position + 1;
+                //Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
+                System.out.println("Hikes count: " + db.getHikesCount());
+                System.out.println("Hikes name: " + db.getHike(hikeId).getName());
+                System.out.println("Hikes observation point count: " + db.getHike(hikeId).getObservationPoints().size());
+                showHikeHistoryDetails(hikeId);
             }
         });
+
+        db.close();
+    }
+
+    private void showHikeHistoryDetails(int hikeId) {
+        Intent intent = new Intent(this, HistoryItemActivity.class);
+        intent.putExtra("hikeId", hikeId);
+        startActivity(intent);
     }
 
     // For testing

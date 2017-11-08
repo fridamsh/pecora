@@ -5,14 +5,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -24,10 +22,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnNewHike;
     private Button btnDownloadMap;
     private Button btnSeeHistory;
-    //Button btnCachedMap;
-    //Button btnTrackingMap;
-    //Button btnTracking;
-    //Button btnStartNewHike;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,32 +31,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             this.getSupportActionBar().hide();
         }
-        catch (NullPointerException e) {}
+        catch (NullPointerException e) { }
 
         setContentView(R.layout.activity_main);
 
         btnNewHike = (Button) findViewById(R.id.btn_new_hike);
-        btnDownloadMap = (Button) findViewById(R.id.btn_download);
-        btnSeeHistory = (Button) findViewById(R.id.btn_history);
-        //btnCachedMap = (Button) findViewById(R.id.btnCachedMap);
-        //btnTrackingMap = (Button) findViewById(R.id.btnTrackingMap);
-        //btnTracking = (Button) findViewById(R.id.btnTracking);
-        //btnStartNewHike = (Button) findViewById(R.id.btnStartNewHike);
-
         btnNewHike.setOnClickListener(this);
+
+        btnDownloadMap = (Button) findViewById(R.id.btn_download);
         btnDownloadMap.setOnClickListener(this);
+
+        btnSeeHistory = (Button) findViewById(R.id.btn_history);
         btnSeeHistory.setOnClickListener(this);
-        //btnCachedMap.setOnClickListener(this);
-        //btnTrackingMap.setOnClickListener(this);
-        //btnTracking.setOnClickListener(this);
-        //btnStartNewHike.setOnClickListener(this);
 
         btnDownloadMap.setEnabled(hasNetworkConnection());
 
         checkPermissions();
-
-        /*SQLiteDatabase pecoraDatabase = openOrCreateDatabase("Pecora Database", MODE_PRIVATE, null);
-        pecoraDatabase.execSQL("CREATE TABLE IF NOT EXISTS Hike(Title VARCHAR, Name VARCHAR, Name VARCHAR, Participants INT, Weather VARCHAR, Description VARCHAR, Start LONG, End LONG, Mapfile VARCHAR);");*/
     }
 
     @Override
@@ -96,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-    // START PERMISSION CHECK
+    // Start permission check
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     @TargetApi(23)
@@ -133,18 +117,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent3 = new Intent(this, HistoryActivity.class);
                 startActivity(intent3);
                 break;
-            /*case R.id.btnCachedMap:
-                Intent intent3 = new Intent(this, CachedMapActivity.class);
-                startActivity(intent3);
-                break;*/
-            /*case R.id.btnTrackingMap:
-                Intent intent4 = new Intent(this, MapActivity.class);
-                startActivity(intent4);
-                break;*/
-            /*case R.id.btnTracking:
-                Intent intent5 = new Intent(this, TrackingActivity.class);
-                startActivity(intent5);
-                break;*/
         }
     }
 

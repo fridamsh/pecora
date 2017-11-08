@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -13,13 +12,13 @@ import java.util.List;
 import msh.frida.mapapp.Models.HikeModel;
 import msh.frida.mapapp.R;
 
-public class SimpleArrayAdapter extends ArrayAdapter<HikeModel> {
+public class HistoryArrayAdapter extends ArrayAdapter<HikeModel> {
 
     private final Context context;
     private final List<HikeModel> values;
 
-    public SimpleArrayAdapter(Context context, List<HikeModel> values) {
-        super(context, R.layout.listviewlayoyt, values);
+    public HistoryArrayAdapter(Context context, List<HikeModel> values) {
+        super(context, R.layout.history_listview_layout, values);
         this.context = context;
         this.values = values;
     }
@@ -32,10 +31,10 @@ public class SimpleArrayAdapter extends ArrayAdapter<HikeModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
+        View view;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            view = inflater.inflate(R.layout.listviewlayoyt, null);
+            view = inflater.inflate(R.layout.history_listview_layout, null);
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.text = (TextView) view.findViewById(R.id.label);
             viewHolder.text2 = (TextView) view.findViewById(R.id.label2);
@@ -45,7 +44,6 @@ public class SimpleArrayAdapter extends ArrayAdapter<HikeModel> {
 
         } else {
             view = convertView;
-            //((ViewHolder) view.getTag()).checkbox.setTag(list.get(position));
         }
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.text.setText(values.get(position).getName());
@@ -53,21 +51,4 @@ public class SimpleArrayAdapter extends ArrayAdapter<HikeModel> {
         holder.text3.setText(values.get(position).getWeatherState());
         return view;
     }
-
-    /*@Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.listviewlayoyt, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        TextView textView2 = (TextView) rowView.findViewById(R.id.label2);
-        TextView textView3 = (TextView) rowView.findViewById(R.id.label3);
-        //ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values[position]);
-        textView2.setText(values[position+1]);
-        textView3.setText(values[position+2]);
-        //imageView.setImageResource(R.drawable.icon_sheep);
-
-        return rowView;
-    }*/
 }

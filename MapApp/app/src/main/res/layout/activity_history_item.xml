@@ -3,16 +3,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="30px">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Historikk"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="0px"
-        android:textSize="17sp"
-        android:layout_marginBottom="10dp"/>
+    android:layout_margin="20dp">
 
     <TextView
         android:id="@+id/textView_title"
@@ -20,71 +11,197 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="0px"
-        android:textSize="19sp"
-        android:layout_marginBottom="20dp"
+        android:textSize="24sp"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/colorBlack"/>
-
-    <TableLayout
+    <TextView
+        android:id="@+id/textView_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:stretchColumns="1">
-        <TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Navn"
-                android:paddingBottom="0px"
-                android:textSize="17sp" />
-            <TextView
-                android:id="@+id/textView_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:paddingBottom="0px"
-                android:textSize="17sp"/>
-        </TableRow>
+        android:paddingBottom="0px"
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp" />
 
-        <TableRow
-            android:layout_marginBottom="10dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            android:layout_marginTop="20dp">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp">
+
+                <TableRow
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:text="Gjeter "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:text="Deltakere "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_participants"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:text="Starttid "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_start_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:text="Sluttid "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_end_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:text="Vær "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:text="Kartnavn "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_map_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:text="Detaljer"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                </TableRow>
+
+            </TableLayout>
+
+            <Button
+                android:id="@+id/btn_see_map"
+
+                android:text="Se kart"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttonshape_selector"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+
+                android:layout_marginBottom="0dp"
+                android:layout_gravity="center_horizontal"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Starttid"
-                android:paddingBottom="0px"
-                android:textSize="17sp" />
-            <TextView
-                android:id="@+id/textView_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:paddingBottom="0px"
-                android:textSize="17sp"/>
-        </TableRow>
+                android:layout_gravity="start"
+                android:text="Observasjoner"
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
 
-        <TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Sluttid"
-                android:paddingBottom="0px"
-                android:textSize="17sp" />
-            <TextView
-                android:id="@+id/textView_end"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:paddingBottom="0px"
-                android:textSize="17sp"/>
-        </TableRow>
+            <ListView
+                android:id="@+id/listView_observations"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+            </ListView>
 
-    </TableLayout>
+        </LinearLayout>
 
-
+    </ScrollView>
 
 </LinearLayout>

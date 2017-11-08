@@ -127,13 +127,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
-                android:id="@+id/btn_cancel"
+                android:id="@+id/btn_observation_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:text="Avbryt"/>
             <Button
-                android:id="@+id/btn_ok"
+                android:id="@+id/btn_observation_ok"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
