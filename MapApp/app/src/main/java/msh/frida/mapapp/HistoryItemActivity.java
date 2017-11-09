@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -82,6 +83,13 @@ public class HistoryItemActivity extends AppCompatActivity {
         listViewObservations = (ListView) findViewById(R.id.listView_observations);
         listViewObservations.setAdapter(adapter);
         setListViewHeightBasedOnChildren(listViewObservations);
+        listViewObservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
+                showObservationDetails(position);
+            }
+        });
 
         btnSeeMap = (Button) findViewById(R.id.btn_see_map);
         btnSeeMap.setOnClickListener(new View.OnClickListener() {
@@ -92,22 +100,17 @@ public class HistoryItemActivity extends AppCompatActivity {
 
     }
 
+    private void showObservationDetails(int position) {
+        Intent intent = new Intent(this, HistoryItemObservationDetailsActivity.class);
+        intent.putExtra("hikeId", hikeId);
+        intent.putExtra("observationPointId", position);
+        startActivity(intent);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        /*SharedPreferences sp = getSharedPreferences("hikeId", 0);
-        hikeId = sp.getInt("hikeId", 0);*/
     }
-
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                hikeId = data.getIntExtra("hikeId", 0);
-            }
-        }
-    }*/
 
     private void showItemMap() {
         Intent intent = new Intent(this, HistoryItemMapActivity.class);

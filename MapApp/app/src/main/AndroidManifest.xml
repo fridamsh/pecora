@@ -83,6 +83,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="msh.frida.mapapp.HistoryItemActivity" />
         </activity>
+        <activity
+            android:name=".HistoryItemObservationDetailsActivity"
+            android:label="@string/history_item_observation_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.HistoryItemActivity" />
+        </activity>
     </application>
 
 </manifest>

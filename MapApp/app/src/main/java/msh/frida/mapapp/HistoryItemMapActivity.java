@@ -15,15 +15,19 @@ import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Set;
 
 import msh.frida.mapapp.Models.HikeModel;
+import msh.frida.mapapp.Models.Observation;
+import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
 
 public class HistoryItemMapActivity extends AppCompatActivity {
@@ -62,27 +66,17 @@ public class HistoryItemMapActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                System.out.println("Back pressed");
-                Intent intent = new Intent(this, HistoryItemActivity.class);
-                intent.putExtra("hikeId", hikeId);
-                startActivity(intent);
-                break;
-        }
+        onBackPressed();
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        System.out.println("Back pressed");
-        Intent intent = new Intent(this, HistoryItemActivity.class);
-        intent.putExtra("hikeId", hikeId);
-        startActivity(intent);
-
+        super.onBackPressed();
     }
 
     private void putTrackAndMarkersOnMap() {
+        // Put track on map
         Polyline track = new Polyline();
         track.setWidth(5f);
         track.setColor(Color.BLUE);
@@ -90,20 +84,68 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         track.setPoints(hike.getTrackPoints());
         mMapView.getOverlayManager().add(track);
 
+        // Put start and end markers on map
         Marker startMarker = new Marker(mMapView);
-        startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_marker_green_small));
+        startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_red_small));
         startMarker.setPosition(hike.getTrackPoints().get(0));
-        startMarker.setTitle("Start point");
+        startMarker.setTitle("Startpunkt");
+        startMarker.setSubDescription("Kl. " + getTime(hike.getDateStart()));
         mMapView.getOverlays().add(startMarker);
 
         Marker endMarker = new Marker(mMapView);
-        endMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_marker_orange_small));
+        endMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_red_small));
         endMarker.setPosition(hike.getTrackPoints().get(hike.getTrackPoints().size()-1));
-        endMarker.setTitle("End point");
+        endMarker.setTitle("Sluttpunkt");
+        endMarker.setSubDescription("Kl. " + getTime(hike.getDateEnd()));
         mMapView.getOverlays().add(endMarker);
+
+        // Put observation point and observation markers on map
+        int i = 1;
+        int j = 1;
+        for (ObservationPoint op : hike.getObservationPoints()) {
+            Marker opMarker = new Marker(mMapView);
+            opMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
+            opMarker.setPosition(op.getLocation());
+            opMarker.setTitle("Observasjonspunkt " + i);
+            opMarker.setSubDescription("Antall observasjoner: " + op.getObservationList().size());
+            mMapView.getOverlays().add(opMarker);
+            for (Observation o : op.getObservationList()) {
+                Marker oMarker = new Marker(mMapView);
+                oMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_green_small));
+                oMarker.setPosition(o.getLocation());
+                oMarker.setTitle("Observasjon " + j);
+                oMarker.setSubDescription("Type observasjon: " + o.getTypeOfObservation() + ", detaljer: " + o.getDetails());
+                mMapView.getOverlays().add(oMarker);
+
+                Polyline oTrack = new Polyline();
+                oTrack.setWidth(3f);
+                oTrack.setColor(Color.RED);
+                oTrack.setGeodesic(true);
+                ArrayList<GeoPoint> points = new ArrayList<>();
+                points.add(op.getLocation());
+                points.add(o.getLocation());
+                oTrack.setPoints(points);
+                mMapView.getOverlayManager().add(0, oTrack);
+
+                j++;
+            }
+            i++;
+            j = 1;
+        }
+
         mMapView.invalidate();
 
         db.close();
+    }
+
+    private String getTime(Long dateInMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(dateInMillis);
+        String date = c.getTime().toString();
+        String[] dateArray = date.split(" ");
+        String[] timeArray = dateArray[3].split(":");
+
+        return timeArray[0] + ":" + timeArray[1];
     }
 
     private void getCachedMap(String fileName) {

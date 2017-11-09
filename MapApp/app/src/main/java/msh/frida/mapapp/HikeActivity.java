@@ -127,6 +127,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(hikeModel.getDateStart());
 
+        // TODO: Remove when done
         System.out.println("\n File: " + fileName);
         System.out.println("\n Hike: " + hikeModel.getName() + "\nTittel: " + hikeModel.getTitle() + "\nDate: " + c.getTime().toString());
 
@@ -354,26 +355,27 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.imgBtn_new_point:
                 if (currentLocation != null) {
                     mObservationPointMode = !mObservationPointMode;
-
                     if (mObservationPointMode) {
-                        btnNewObservationPoint.setImageResource(R.drawable.icon_new_red);
-                        btnNewObservation.setVisibility(View.VISIBLE);
-
-                        GeoPoint observationPointLocation = new GeoPoint(currentLocation);
-                        observationPoints.add(observationPointLocation);
-                        // New observation point, clear it if it exists
-                        currentObservationPoint = new ObservationPoint(observationPointLocation);
-                        currentObservationPoint.setTimeOfObservation(Calendar.getInstance().getTimeInMillis());
-
-                        Marker observationMarker = new Marker(mMapView);
-                        observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_marker_green_small));
-                        observationMarker.setPosition(observationPointLocation);
-                        observationMarker.setTitle("Observation Point " + observationPoints.size());
-                        mMapView.getOverlays().add(0, observationMarker);
-                        mMapView.invalidate();
+                        AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(this);
+                        alertDialog2.setTitle("Registrere nytt punkt");
+                        alertDialog2.setMessage("Skal du registrere nytt punkt? Trykk på pluss-knappen igjen når du er ferdig");
+                        alertDialog2.setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int which){
+                                System.out.println("\n USER CLICKED YES \n");
+                                registerNewPoint();
+                            }
+                        });
+                        alertDialog2.setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int which){
+                                System.out.println("\n USER CLICKED NO \n");
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog alert2 = alertDialog2.create();
+                        alert2.show();
                     }
                     else {
-                        btnNewObservationPoint.setImageResource(R.drawable.icon_new);
+                        btnNewObservationPoint.setImageResource(R.drawable.icon_new_green);
                         btnNewObservation.setVisibility(View.GONE);
 
                         // Observation point mode is turned off, and we can now add the observation point
@@ -395,39 +397,11 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 btnNewObservationPoint.setVisibility(View.INVISIBLE);
                 btnNewObservation.setVisibility(View.INVISIBLE);
                 mMapView.setBuiltInZoomControls(false);
-
-                //mObservationMode = !mObservationMode;
-                /*if (mObservationPointMode) {
-                    if (mObservationMode)
-                    {
-                        System.out.println("New observation");
-                        // Show you're in observation mode by showing and hiding drawables
-                        imgCross.setVisibility(View.VISIBLE);
-                        imgCrossMarker.setVisibility(View.VISIBLE);
-                        tblButtons.setVisibility(View.VISIBLE);
-                        frameLayout.setVisibility(View.VISIBLE);
-                        // Hide other stuff to not interrupt
-                        btnCenterMap.setVisibility(View.INVISIBLE);
-                        btnNewObservationPoint.setVisibility(View.INVISIBLE);
-                        btnNewObservation.setVisibility(View.INVISIBLE);
-                        mMapView.setBuiltInZoomControls(false);
-                    }
-                    else {
-                        // TODO: I don't know?
-                    }
-
-                }
-                else {
-                    System.out.println("Not in observation mode");
-                    mObservationMode = false;
-                }*/
                 break;
 
             case R.id.btn_observation_ok:
                 // Get observation information
                 getObservationInformationFromUser();
-
-                //mObservationMode = false;
                 mMapView.setBuiltInZoomControls(true);
                 break;
 
@@ -469,6 +443,24 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
         }
+    }
+
+    private void registerNewPoint() {
+        btnNewObservationPoint.setImageResource(R.drawable.icon_new_red_2);
+        btnNewObservation.setVisibility(View.VISIBLE);
+
+        GeoPoint observationPointLocation = new GeoPoint(currentLocation);
+        observationPoints.add(observationPointLocation);
+        // New observation point, clear it if it exists
+        currentObservationPoint = new ObservationPoint(observationPointLocation);
+        currentObservationPoint.setTimeOfObservation(Calendar.getInstance().getTimeInMillis());
+
+        Marker observationMarker = new Marker(mMapView);
+        observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
+        observationMarker.setPosition(observationPointLocation);
+        observationMarker.setTitle("Observasjonspunkt " + observationPoints.size());
+        mMapView.getOverlays().add(0, observationMarker);
+        mMapView.invalidate();
     }
 
     private void stopHike() {
@@ -620,7 +612,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
                 // Update the map with marker
                 Marker observationMarker = new Marker(mMapView);
-                observationMarker.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.icon_marker_orange_small));
+                observationMarker.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.icon_location_green_small));
                 observationMarker.setPosition(observationLocation);
                 observationMarker.setTitle("Observasjon " + observations.size());
                 if (cb1.isChecked() && !TextUtils.isEmpty(et1.getText().toString())) {
@@ -650,17 +642,15 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 mMapView.getOverlays().add(0, observationMarker);
 
                 // Draw line from observation point to observation
-                if (currentPoint != null) {
-                    Polyline line = new Polyline();
-                    line.setWidth(3f);
-                    line.setColor(Color.RED);
-                    line.setGeodesic(true);
-                    ArrayList<GeoPoint> points = new ArrayList<>();
-                    points.add(currentPoint);
-                    points.add(observationLocation);
-                    line.setPoints(points);
-                    mMapView.getOverlays().add(0, line);
-                }
+                Polyline line = new Polyline();
+                line.setWidth(3f);
+                line.setColor(Color.RED);
+                line.setGeodesic(true);
+                ArrayList<GeoPoint> points = new ArrayList<>();
+                points.add(currentObservationPoint.getLocation());
+                points.add(observationLocation);
+                line.setPoints(points);
+                mMapView.getOverlays().add(0, line);
 
                 mMapView.invalidate();
 
@@ -708,6 +698,12 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
         if (animateToLocation) {
             mMapController.animateTo(new GeoPoint(location));
+            Marker startMarker = new Marker(mMapView);
+            startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_red_small));
+            startMarker.setPosition(new GeoPoint(location));
+            startMarker.setTitle("Startpunkt");
+            startMarker.setSubDescription("Kl. " + getTime(Calendar.getInstance().getTimeInMillis()));
+            mMapView.getOverlays().add(startMarker);
             animateToLocation = false;
             System.out.println("On location changed: animateToLocation = " + animateToLocation);
         }
@@ -753,6 +749,16 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "New point on track", Toast.LENGTH_SHORT);
             }
         }*/
+    }
+
+    private String getTime(Long dateInMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(dateInMillis);
+        String date = c.getTime().toString();
+        String[] dateArray = date.split(" ");
+        String[] timeArray = dateArray[3].split(":");
+
+        return timeArray[0] + ":" + timeArray[1];
     }
 
     @Override

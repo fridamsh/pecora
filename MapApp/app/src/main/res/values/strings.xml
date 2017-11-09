@@ -7,6 +7,7 @@
     <string name="begin_hike_activity_name">Start ny oppsynstur</string>
     <string name="history_activity_name">Historikk</string>
     <string name="history_item_activity_name">Historikk</string>
+    <string name="history_item_observation_activity_name">Historikk</string>
     <string name="hike_summary_activity_name">Oppsummering</string>
 
     <string name="bt_center_map_description">Center on my location</string>

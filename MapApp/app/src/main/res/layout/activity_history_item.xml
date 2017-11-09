@@ -187,11 +187,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="Observasjoner"
+                android:text="Observasjonspunkter"
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <ListView
                 android:id="@+id/listView_observations"
