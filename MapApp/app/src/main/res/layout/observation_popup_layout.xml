@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp">
+                <CheckBox
+                    android:id="@+id/checkBox_sheep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sau"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_sheep"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Antall sau"
+                    android:inputType="number"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/textView_show_more_1"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mer"
+                    android:textStyle="italic"
+                    android:textSize="8pt"
+                    android:clickable="true"/>
+            </LinearLayout>
+
+            <TableLayout
+                android:id="@+id/tableLayout_sheep"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp">
+                <TableRow
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="0dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Antall av"
+                        android:textColor="@color/colorBlack"
+                        android:textStyle="bold"
+                        android:textSize="8pt"
+                        android:layout_column="0" />
+                </TableRow>
+                <TableRow
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="0dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hvite"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="8pt"
+                        android:layout_column="0"/>
+                    <Spinner
+                        android:id="@+id/spinner_white_sheep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:layout_column="1"
+                        />
+                </TableRow>
+                <TableRow
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="0dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Svarte"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="8pt"
+                        android:layout_column="0"/>
+                    <Spinner
+                        android:id="@+id/spinner_black_sheep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:layout_column="1"/>
+                </TableRow>
+                <TableRow
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginLeft="0dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Blanding"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="8pt"
+                        android:layout_column="0"/>
+                    <Spinner
+                        android:id="@+id/spinner_mix_sheep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:layout_column="1"/>
+                </TableRow>
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/checkBox_hurt_sheep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Skadd sau"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_hurt_sheep"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Hvordan er sauen skadet"
+                    android:inputType="textCapSentences"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/checkBox_dead_sheep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Død sau"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_dead_sheep"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Detaljer"
+                    android:inputType="textCapSentences"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/checkBox_predator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rovdyr"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_predator"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Hvordan rovdyr"
+                    android:inputType="textCapSentences"/>
+            </LinearLayout>
+
+            <!--<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/checkBox_hunter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jeger"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_hunter"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Detaljer"
+                    android:inputType="number"
+                    android:layout_marginRight="10dp"/>
+            </LinearLayout>-->
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -4,10 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".HistoryActivity" >
+    tools:context=".HistoryActivity">
+
+    <TextView
+        android:id="@+id/label_none"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Ingen turer å vise"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:id="@+id/label_delete_info"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hold inne på en tur for å slette"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorGrey"/>
+
+    <View
+        android:id="@+id/view_line"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
 
     <ListView
         android:id="@+id/hike_list"
+        android:focusableInTouchMode="true"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>

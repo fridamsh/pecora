@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="90dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
-        android:id="@+id/layout"
+        android:id="@+id/icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:gravity="center_vertical">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Observasjon "
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack" />
-        <TextView
-            android:id="@+id/label"
+            android:id="@+id/label_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1"
-            android:textSize="18sp"
+            android:textSize="26sp"
+            android:textColor="@color/colorBlack"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="1dp"
+        android:layout_height="55dp"
+        android:layout_centerVertical="true"
+        android:background="@color/colorPrimary"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_marginRight="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_toRightOf="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="5dp"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/label_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type: Sau"
+            android:textSize="16sp"
+            android:textColor="@color/colorBlack" />
+        <TextView
+            android:id="@+id/label_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detaljer: Antall: 2, Hvite: 1, Svarte: 1, Blanding: 0"
+            android:textSize="16sp"
             android:textColor="@color/colorBlack" />
     </LinearLayout>
 
-    <TableLayout
+    <!--<TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout"
@@ -64,6 +99,6 @@
                 android:textSize="16sp"/>
         </TableRow>
 
-    </TableLayout>
+    </TableLayout>-->
 
 </RelativeLayout>

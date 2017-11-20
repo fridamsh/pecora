@@ -13,10 +13,13 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import msh.frida.mapapp.Models.HikeModel;
+import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
 import msh.frida.mapapp.Other.HistoryArrayAdapter;
 import msh.frida.mapapp.Other.HistoryItemArrayAdapter;
@@ -57,6 +60,13 @@ public class HistoryItemActivity extends AppCompatActivity {
         tvDate = (TextView) findViewById(R.id.textView_date);
         tvDate.setText(getDate(hike.getDateStart()));
 
+        TextView labelSheepCount = (TextView) findViewById(R.id.label_sheep);
+        int sheepCount = 0;
+        for (ObservationPoint op : hike.getObservationPoints()) {
+            sheepCount += op.getSheepCount();
+        }
+        labelSheepCount.setText("Antall sau sett: " + sheepCount);
+
         tvName = (TextView) findViewById(R.id.textView_name);
         tvName.setText(hike.getName());
 
@@ -79,17 +89,23 @@ public class HistoryItemActivity extends AppCompatActivity {
         tvDetails = (TextView) findViewById(R.id.textView_details);
         tvDetails.setText(hike.getDescription());
 
-        HistoryItemArrayAdapter adapter = new HistoryItemArrayAdapter(this, hike.getObservationPoints());
-        listViewObservations = (ListView) findViewById(R.id.listView_observations);
-        listViewObservations.setAdapter(adapter);
-        setListViewHeightBasedOnChildren(listViewObservations);
-        listViewObservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
-                showObservationDetails(position);
-            }
-        });
+        TextView labelNone = (TextView) findViewById(R.id.label_none);
+        if (hike.getObservationPoints().isEmpty()) {
+            labelNone.setVisibility(View.VISIBLE);
+        } else {
+            HistoryItemArrayAdapter adapter = new HistoryItemArrayAdapter(this, hike.getObservationPoints());
+            listViewObservations = (ListView) findViewById(R.id.listView_observations);
+            listViewObservations.setVisibility(View.VISIBLE);
+            listViewObservations.setAdapter(adapter);
+            setListViewHeightBasedOnChildren(listViewObservations);
+            listViewObservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
+                    showObservationDetails(position);
+                }
+            });
+        }
 
         btnSeeMap = (Button) findViewById(R.id.btn_see_map);
         btnSeeMap.setOnClickListener(new View.OnClickListener() {

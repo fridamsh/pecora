@@ -27,10 +27,8 @@ public class HikeModel implements Parcelable, Serializable {
     private long dateEnd;
     private String mapFileName;
     private List<ObservationPoint> observationPoints;
-    //private String observationPointsString;
     private transient Polyline track;
     private List<GeoPoint> trackPoints;
-    //private String trackPointsString;
 
     // Empty constructor
     public HikeModel() {}

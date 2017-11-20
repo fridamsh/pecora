@@ -86,7 +86,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
 
         // Put start and end markers on map
         Marker startMarker = new Marker(mMapView);
-        startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_red_small));
+        startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_green_small));
         startMarker.setPosition(hike.getTrackPoints().get(0));
         startMarker.setTitle("Startpunkt");
         startMarker.setSubDescription("Kl. " + getTime(hike.getDateStart()));
@@ -111,10 +111,14 @@ public class HistoryItemMapActivity extends AppCompatActivity {
             mMapView.getOverlays().add(opMarker);
             for (Observation o : op.getObservationList()) {
                 Marker oMarker = new Marker(mMapView);
-                oMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_green_small));
+                oMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_dot_yellow_small));
                 oMarker.setPosition(o.getLocation());
                 oMarker.setTitle("Observasjon " + j);
-                oMarker.setSubDescription("Type observasjon: " + o.getTypeOfObservation() + ", detaljer: " + o.getDetails());
+                if (o.getTypeOfObservation().equals("Sau")) {
+                    oMarker.setSubDescription("Type observasjon: " + o.getTypeOfObservation() + ", antall: " + o.getSheepCount());
+                } else {
+                    oMarker.setSubDescription("Type observasjon: " + o.getTypeOfObservation() + ", detaljer: " + o.getDetails());
+                }
                 mMapView.getOverlays().add(oMarker);
 
                 Polyline oTrack = new Polyline();
@@ -130,7 +134,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
                 j++;
             }
             i++;
-            j = 1;
+            //j = 1;
         }
 
         mMapView.invalidate();

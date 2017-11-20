@@ -4,10 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 import msh.frida.mapapp.Models.HikeModel;
+import msh.frida.mapapp.Models.ObservationPoint;
+import msh.frida.mapapp.Other.DatabaseHandler;
 
 public class HikeSummaryActivity extends AppCompatActivity {
 
@@ -23,13 +25,24 @@ public class HikeSummaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hike_summary);
 
         Bundle extras = getIntent().getExtras();
-        HikeModel hikeModel = extras.getParcelable("hikeModel");
+        int hikeId = extras.getInt("hikeId");
+        double distanceWalked = extras.getDouble("distanceWalked");
+
+        DatabaseHandler db = new DatabaseHandler(this);
+        HikeModel hikeModel = db.getHike(hikeId);
+        db.close();
 
         tvTitle = (TextView) findViewById(R.id.textView_title);
         tvTitle.setText(hikeModel.getTitle());
 
+        TextView tvDate = (TextView) findViewById(R.id.textView_date);
+        tvDate.setText(getDate(hikeModel.getDateStart()));
+
         tvDuration = (TextView) findViewById(R.id.textView_duration);
-        tvDuration.setText(getDuration(hikeModel.getDateStart(),hikeModel.getDateEnd()));
+        tvDuration.setText(getDuration(hikeModel.getDateStart(), hikeModel.getDateEnd()));
+
+        TextView tvDistance = (TextView) findViewById(R.id.textView_distance);
+        tvDistance.setText(Double.toString(distanceWalked) + " km");
 
         tvStart = (TextView) findViewById(R.id.textView_start);
         tvStart.setText(getTime(hikeModel.getDateStart()));
@@ -38,7 +51,29 @@ public class HikeSummaryActivity extends AppCompatActivity {
         tvEnd.setText(getTime(hikeModel.getDateEnd()));
 
         tvNumberOfObservations = (TextView) findViewById(R.id.textView_number_of_observations);
-        tvNumberOfObservations.setText("");
+        if (hikeModel.getObservationPoints().isEmpty()) {
+            tvNumberOfObservations.setText("Ingen");
+        } else {
+            tvNumberOfObservations.setText(""+hikeModel.getObservationPoints().size());
+        }
+
+        TextView labelSheep = (TextView) findViewById(R.id.textView_sheep);
+        int sheepCount = 0;
+        if (!hikeModel.getObservationPoints().isEmpty()) {
+            for (ObservationPoint op : hikeModel.getObservationPoints()) {
+                sheepCount += op.getSheepCount();
+            }
+        }
+        labelSheep.setText(""+sheepCount);
+    }
+
+    private String getDate(Long dateInMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(dateInMillis);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String dateFormatted = format.format(c.getTime());
+
+        return dateFormatted;
     }
 
     private String getTime(Long dateInMillis) {

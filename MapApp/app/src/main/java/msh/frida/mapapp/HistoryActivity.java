@@ -1,13 +1,15 @@
 package msh.frida.mapapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msh.frida.mapapp.Models.HikeModel;
@@ -16,9 +18,7 @@ import msh.frida.mapapp.Other.HistoryArrayAdapter;
 
 public class HistoryActivity extends AppCompatActivity {
 
-    private ListView listView;
     private DatabaseHandler db;
-    //private HikeModel hikeModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,51 +27,99 @@ public class HistoryActivity extends AppCompatActivity {
 
         // Initialize db
         db = new DatabaseHandler(this);
+        List<HikeModel> list = db.getAllHikes();
 
-        HistoryArrayAdapter adapter = new HistoryArrayAdapter(this, getHikesFromDb());
+        final HistoryArrayAdapter adapter = new HistoryArrayAdapter(this, list);
 
-        listView = (ListView) findViewById(R.id.hike_list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int hikeId = position + 1;
-                //Toast.makeText(getApplicationContext(), "Clicked ListItem Number " + position, Toast.LENGTH_SHORT).show();
-                System.out.println("Hikes count: " + db.getHikesCount());
-                System.out.println("Hikes name: " + db.getHike(hikeId).getName());
-                System.out.println("Hikes observation point count: " + db.getHike(hikeId).getObservationPoints().size());
-                showHikeHistoryDetails(hikeId);
-            }
-        });
+        if (list.isEmpty()) {
+            TextView labelNone = (TextView) findViewById(R.id.label_none);
+            labelNone.setVisibility(View.VISIBLE);
+        } else {
+            TextView labelDeleteInfo = (TextView) findViewById(R.id.label_delete_info);
+            labelDeleteInfo.setVisibility(View.VISIBLE);
 
-        db.close();
+            View line = findViewById(R.id.view_line);
+            line.setVisibility(View.VISIBLE);
+
+            ListView listView = (ListView) findViewById(R.id.hike_list);
+            listView.setVisibility(View.VISIBLE);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    System.out.println("Id: " + adapter.getItem(position).getId());
+                    int hikeId = adapter.getItem(position).getId();
+                    startHistoryItemActivity(hikeId);
+                }
+            });
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    HikeModel hike = adapter.getItem(position);
+                    deleteHike(hike, adapter);
+                    return true;
+                }
+            });
+        }
     }
 
-    private void showHikeHistoryDetails(int hikeId) {
+    private void startHistoryItemActivity(int hikeId) {
         Intent intent = new Intent(this, HistoryItemActivity.class);
         intent.putExtra("hikeId", hikeId);
         startActivity(intent);
     }
 
-    // For testing
-    private List<HikeModel> getHikesFromDb() {
-        List<HikeModel> list = db.getAllHikes();
-        return list;
+    private void deleteHike(final HikeModel hike, final HistoryArrayAdapter adapter) {
+        // Alert dialog for safety if user didn't mean to onItemLongClick()
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Slett tur");
+        alertDialog.setMessage("Er du sikker på at du vil slette denne turen?");
+        alertDialog.setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                db.deleteHike(hike);
+                adapter.remove(hike);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        alertDialog.setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = alertDialog.create();
+        alert.show();
     }
 
-    // For testing
-    private List<HikeModel> getHikeModel() {
-        List<HikeModel> list = new ArrayList<>();
-        //list.add(hikeModel);
-        list.add(get("Tur torsdag ettermiddag", "Frida", "Regn"));
-        list.add(get("Tur fredag kveld", "Frida", "Overskyet"));
-        list.add(get("Tur lørdag morgen", "Frida", "Sol"));
-        return list;
+    @Override
+    public void onRestart() {
+        super.onRestart();
     }
 
-    private HikeModel get(String title, String name, String weatherState) {
-        return new HikeModel(title, name, weatherState);
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
+        finish();
+    }
 
 }

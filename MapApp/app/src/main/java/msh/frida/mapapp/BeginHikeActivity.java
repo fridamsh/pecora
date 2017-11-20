@@ -24,12 +24,9 @@ import msh.frida.mapapp.Models.HikeModel;
 public class BeginHikeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String chosenFileName;
-    //private List<File> supportedFiles;
-
     private HikeModel hike;
 
     private Button btnStart;
-
     private EditText etName;
     private EditText etWeather;
     private EditText etDescription;
@@ -71,20 +68,9 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        //String chosenFileName = dropdownMap.getSelectedItem().toString();
 
         btnStart = (Button) findViewById(R.id.btn_start_hike);
         btnStart.setOnClickListener(this);
-
-        /*hike.setName("Frida");
-        hike.setNumberOfParticipants(2);
-        hike.setWeatherState("Småregn");
-        hike.setDescription("Sjekke skadd lam.");
-        hike.setMapFile(chosenFileName);
-        hike.setDateStart(Calendar.getInstance());
-        hike.setDateEnd(Calendar.getInstance());*/
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override
@@ -167,7 +153,6 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                 // TODO: set DateEnd after ended hike
 
                 Intent intent1 = new Intent(this, HikeActivity.class);
-                //intent1.putExtra("file", chosenFileName);
                 intent1.putExtra("hikeObject", (Parcelable) hike);
                 startActivity(intent1);
                 break;

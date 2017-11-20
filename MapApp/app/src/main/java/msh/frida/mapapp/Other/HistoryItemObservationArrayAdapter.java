@@ -41,9 +41,9 @@ public class HistoryItemObservationArrayAdapter extends ArrayAdapter<Observation
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
             view = inflater.inflate(R.layout.history_item_observation_layout, null);
             final HistoryItemObservationArrayAdapter.ViewHolder viewHolder = new HistoryItemObservationArrayAdapter.ViewHolder();
-            viewHolder.text = (TextView) view.findViewById(R.id.label);
-            viewHolder.text2 = (TextView) view.findViewById(R.id.label2);
-            viewHolder.text3 = (TextView) view.findViewById(R.id.label3);
+            viewHolder.text = (TextView) view.findViewById(R.id.label_number);
+            viewHolder.text2 = (TextView) view.findViewById(R.id.label_type);
+            viewHolder.text3 = (TextView) view.findViewById(R.id.label_details);
 
             view.setTag(viewHolder);
 
@@ -52,8 +52,8 @@ public class HistoryItemObservationArrayAdapter extends ArrayAdapter<Observation
         }
         HistoryItemObservationArrayAdapter.ViewHolder holder = (HistoryItemObservationArrayAdapter.ViewHolder) view.getTag();
         holder.text.setText(Integer.toString(position+1));
-        holder.text2.setText(values.get(position).getTypeOfObservation());
-        holder.text3.setText(values.get(position).getDetails());
+        holder.text2.setText("Type: " + values.get(position).getTypeOfObservation());
+        holder.text3.setText("Detaljer: " + values.get(position).getDetails());
         return view;
     }
 }

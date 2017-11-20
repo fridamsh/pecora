@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="80dp"
-    android:padding="10dp" >
+    android:layout_height="90dp"
+    android:padding="10dp"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp">
 
-    <ImageView
+    <LinearLayout
         android:id="@+id/icon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="6dip"
-        android:contentDescription="TODO"
-        android:src="@drawable/icon_history_2" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/label_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nov"
+            android:textSize="17sp"
+            android:textColor="@color/colorBlack"
+            android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/label_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12"
+            android:textSize="26sp"
+            android:textColor="@color/colorBlack"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="1dp"
+        android:layout_height="60dp"
+        android:background="@color/colorPrimary"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_marginRight="15dp"
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,17 +49,10 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
+        android:layout_toRightOf="@id/line"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:layout_centerVertical="true">
-
-        <TextView
-            android:id="@+id/label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="02/11/2017"
-            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/label2"
@@ -38,87 +60,23 @@
             android:layout_height="wrap_content"
             android:text="Tur torsdag morgen"
             android:textStyle="bold"
-            android:textColor="@color/colorBlack"/>
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kl. 16:21"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/label3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Varighet: 41:21"
-            android:textSize="12sp"/>
+            android:text="Overskyet"
+            android:textSize="15sp"/>
 
     </LinearLayout>
-
-    <!--<TableLayout
-        android:id="@+id/tableLayout_history_item"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
-        android:stretchColumns="0,1,2">
-
-        <TableRow>
-            <TextView
-                android:id="@+id/label"
-                android:layout_column="0"
-                android:text="02/11/2017"
-                android:textSize="12sp"
-                android:layout_span="3" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:id="@+id/label2"
-                android:layout_column="0"
-                android:text="Tur torsdag morgen"
-                android:layout_span="3"
-                android:textStyle="bold"
-                android:textColor="@color/colorBlack"/>
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:id="@+id/label3"
-                android:layout_column="0"
-                android:text="Varighet: 41:21"
-                android:textSize="12sp"/>
-            <TextView
-                android:id="@+id/label4"
-                android:layout_column="1"
-                android:text="Vær: Fint"
-                android:textSize="12sp"/>
-            <TextView
-                android:id="@+id/label5"
-                android:layout_column="2"
-                android:text="Gjeter: Frida"
-                android:textSize="12sp"/>
-        </TableRow>
-    </TableLayout>-->
-
-<!--    <TextView
-        android:id="@+id/secondLine"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/icon"
-        android:ellipsize="marquee"
-        android:maxLines="1"
-        android:text="Description"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/firstLine"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp" />-->
 
 </RelativeLayout>

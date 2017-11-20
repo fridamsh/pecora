@@ -12,23 +12,9 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgBtn_center_map"
-        android:src="@drawable/icon_mylocation_green"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:background="#00ffffff"
-        android:contentDescription="@string/bt_center_map_description"
-        android:cropToPadding="true" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/imgBtn_new_point"
         android:src="@drawable/icon_new_green"
-        android:layout_below="@+id/imgBtn_center_map"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
@@ -41,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imgBtn_new_observation"
-        android:src="@drawable/icon_sheep_green"
+        android:src="@drawable/icon_new_obs_green"
         android:layout_below="@+id/imgBtn_new_point"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -50,7 +36,22 @@
         android:background="#00ffffff"
         android:contentDescription=""
         android:cropToPadding="true"
-        android:visibility="gone"/>
+        android:visibility="invisible"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtn_center_map"
+        android:src="@drawable/icon_mylocation_green"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="10dp"
+        android:background="#00ffffff"
+        android:contentDescription="@string/bt_center_map_description"
+        android:cropToPadding="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -58,7 +59,7 @@
         android:id="@+id/imgBtn_stop_hike"
         android:src="@drawable/icon_stop_hike_2"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="25dp"
         android:layout_marginLeft="10dp"
         android:background="#00ffffff"
         android:cropToPadding="true" />
@@ -140,5 +141,21 @@
                 android:text="Ok"/>
         </TableRow>
     </TableLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="©Kartverket"
+        android:textColor="@color/colorBlack"
+        android:shadowColor="@color/colorWhite"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="10"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="5dp"
+        android:background="#7FFFFFFF"
+        android:paddingRight="2dp"
+        android:paddingLeft="2dp"/>
 
 </RelativeLayout>

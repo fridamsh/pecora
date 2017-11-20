@@ -15,6 +15,7 @@ public class ObservationPoint {
     private GeoPoint location;
     private long timeOfObservation;
     private List<Observation> observationList;
+    private int sheepCount = 0;
 
     public ObservationPoint(GeoPoint location) {
         this.location = location;
@@ -24,10 +25,6 @@ public class ObservationPoint {
     public GeoPoint getLocation() {
         return location;
     }
-
-    /*public void setLocation(GeoPoint location) {
-        this.location = location;
-    }*/
 
     public long getTimeOfObservation() {
         return timeOfObservation;
@@ -43,5 +40,13 @@ public class ObservationPoint {
 
     public void setObservationList(List<Observation> observationList) {
         this.observationList = observationList;
+    }
+
+    public int getSheepCount() {
+        return sheepCount;
+    }
+
+    public void increaseSheepCount(int sheepCount) {
+        this.sheepCount += sheepCount;
     }
 }

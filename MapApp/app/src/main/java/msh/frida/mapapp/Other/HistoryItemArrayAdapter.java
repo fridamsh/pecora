@@ -32,6 +32,7 @@ public class HistoryItemArrayAdapter extends ArrayAdapter<ObservationPoint> {
         protected TextView text;
         protected TextView text2;
         protected TextView text3;
+        protected TextView text4;
     }
 
     @Override
@@ -41,9 +42,10 @@ public class HistoryItemArrayAdapter extends ArrayAdapter<ObservationPoint> {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
             view = inflater.inflate(R.layout.history_item_listview_layout, null);
             final HistoryItemArrayAdapter.ViewHolder viewHolder = new HistoryItemArrayAdapter.ViewHolder();
-            viewHolder.text = (TextView) view.findViewById(R.id.label);
-            viewHolder.text2 = (TextView) view.findViewById(R.id.label2);
-            viewHolder.text3 = (TextView) view.findViewById(R.id.label3);
+            viewHolder.text = (TextView) view.findViewById(R.id.label_number);
+            viewHolder.text2 = (TextView) view.findViewById(R.id.label_time);
+            viewHolder.text3 = (TextView) view.findViewById(R.id.label_number_of_observations);
+            viewHolder.text4 = (TextView) view.findViewById(R.id.label_sheep);
 
             view.setTag(viewHolder);
 
@@ -52,8 +54,9 @@ public class HistoryItemArrayAdapter extends ArrayAdapter<ObservationPoint> {
         }
         HistoryItemArrayAdapter.ViewHolder holder = (HistoryItemArrayAdapter.ViewHolder) view.getTag();
         holder.text.setText(Integer.toString(position+1));
-        holder.text2.setText(Integer.toString(values.get(position).getObservationList().size()));
-        holder.text3.setText(getTime(values.get(position).getTimeOfObservation()));
+        holder.text2.setText("Kl. " + getTime(values.get(position).getTimeOfObservation()));
+        holder.text3.setText("Antall observasjoner: " + Integer.toString(values.get(position).getObservationList().size()));
+        holder.text4.setText("Antall sau sett: " + Integer.toString(values.get(position).getSheepCount()));
         return view;
     }
 

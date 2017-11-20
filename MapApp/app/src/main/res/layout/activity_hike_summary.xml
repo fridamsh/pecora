@@ -3,24 +3,39 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_margin="30dp">
+    android:layout_margin="0dp">
 
     <TextView
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="0px"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:textSize="24sp"
-        android:layout_marginBottom="30dp"
         android:textColor="@color/colorBlack"/>
 
-    <TableLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:stretchColumns="*"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="0px"
+        android:textSize="20sp"
+        android:layout_marginBottom="15dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp">
 
         <TableRow
             android:layout_marginBottom="10dp">
@@ -29,15 +44,31 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:text="Varighet"
-                android:textSize="19sp"
-                android:textColor="@color/colorGrey"
-                android:textStyle="bold"/>
+                android:textSize="18sp" />
             <TextView
                 android:id="@+id/textView_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
-                android:textSize="19sp"
+                android:textSize="18sp"
+                android:layout_gravity="end"
+                android:textColor="@color/colorBlack"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Distanse"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/textView_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="18sp"
                 android:layout_gravity="end"
                 android:textColor="@color/colorBlack"/>
         </TableRow>
@@ -49,15 +80,13 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:text="Starttid"
-                android:textSize="19sp"
-                android:textColor="@color/colorGrey"
-                android:textStyle="bold"/>
+                android:textSize="18sp" />
             <TextView
                 android:id="@+id/textView_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
-                android:textSize="19sp"
+                android:textSize="18sp"
                 android:layout_gravity="end"
                 android:textColor="@color/colorBlack"/>
         </TableRow>
@@ -69,98 +98,16 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:text="Sluttid"
-                android:textSize="19sp"
-                android:textColor="@color/colorGrey"
-                android:textStyle="bold"/>
+                android:textSize="18sp" />
             <TextView
                 android:id="@+id/textView_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
-                android:textSize="19sp"
+                android:textSize="18sp"
                 android:layout_gravity="end"
                 android:textColor="@color/colorBlack"/>
         </TableRow>
-
-        <!--<TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Gjeter"
-                android:textSize="19sp"
-                android:textColor="@color/colorBlack"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/textView_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:textSize="19sp"
-                android:layout_gravity="end"
-                android:textColor="@color/colorBlack"/>
-        </TableRow>-->
-
-        <!--<TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Deltakere"
-                android:textSize="19sp"
-                android:textColor="@color/colorBlack"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/textView_participants"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:textSize="19sp"
-                android:layout_gravity="end"
-                android:textColor="@color/colorBlack"/>
-        </TableRow>-->
-
-        <!--<TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Vær"
-                android:textSize="19sp"
-                android:textColor="@color/colorBlack"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/textView_weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:textSize="19sp"
-                android:layout_gravity="end"
-                android:textColor="@color/colorBlack"/>
-        </TableRow>-->
-
-        <!--<TableRow
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Beskrivelse"
-                android:textSize="19sp"
-                android:textColor="@color/colorBlack"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/textView_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:textSize="19sp"
-                android:layout_gravity="end"
-                android:textColor="@color/colorBlack"/>
-        </TableRow>-->
 
         <TableRow
             android:layout_marginBottom="10dp">
@@ -169,21 +116,33 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:text="Antall observasjoner"
-                android:textSize="19sp"
-                android:textColor="@color/colorGrey"
-                android:textStyle="bold"/>
+                android:textSize="18sp" />
             <TextView
                 android:id="@+id/textView_number_of_observations"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
-                android:textSize="19sp"
+                android:textSize="18sp"
                 android:layout_gravity="end"
                 android:textColor="@color/colorBlack"/>
         </TableRow>
 
+        <TableRow
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Antall sau sett"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/textView_sheep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="18sp"
+                android:layout_gravity="end"
+                android:textColor="@color/colorBlack"/>
+        </TableRow>
     </TableLayout>
-
-
-
 </LinearLayout>

@@ -20,13 +20,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.DelayedMapListener;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
@@ -67,11 +74,25 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.getController().setZoom(15);
         mMapView.setMinZoomLevel(6);
-        mMapView.setMaxZoomLevel(17);
+        mMapView.setMaxZoomLevel(18);
         mMapView.setMultiTouchControls(true);
         mMapView.setBuiltInZoomControls(true);
         mMapView.setTilesScaledToDpi(true);
         mMapView.setFlingEnabled(true);
+        final TextView labelZoom = (TextView) findViewById(R.id.label_zoom);
+        labelZoom.setText("Zoom: "+mMapView.getZoomLevel());
+        mMapView.setMapListener(new DelayedMapListener(new MapListener() {
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                labelZoom.setText("Zoom: "+mMapView.getZoomLevel());
+                return false;
+            }
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                Log.i("zoom", event.toString());
+                return false;
+            }
+        }, 100));
 
         OnlineTileSourceBase onlineTileSourceBase = new OnlineTileSourceBase(
                 "topo2", 0, 18, 256, "",
@@ -107,26 +128,6 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         imgBtnMyLocation = (ImageButton) findViewById(R.id.imgBtnMyLocation);
         imgBtnArchive.setOnClickListener(this);
         imgBtnMyLocation.setOnClickListener(this);
-
-    }
-
-    private void getMyLocation() {
-/*        final MapController mapController = (MapController) mMapView.getController();
-
-        mapController.setZoom(14);
-
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
-        mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
-        mLocationOverlay.setDrawAccuracyEnabled(true);
-
-        mMapView.getOverlays().add(this.mLocationOverlay);*/
-
-        mLocationOverlay.runOnFirstFix(new Runnable() {
-            public void run() {
-                mMapView.getController().animateTo(mLocationOverlay.getMyLocation());
-            }
-        });
     }
 
     @Override
@@ -139,7 +140,8 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                 new Thread(this).start();
                 break;*/
             case R.id.archiveImgBtn:
-                archiveBtnClicked();
+                //archiveBtnClicked();
+                getDownloadInformation();
                 break;
             case R.id.imgBtnMyLocation:
                 if (currentLocation != null) {
@@ -150,7 +152,104 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void startDownload(String downloadName) {
+    private void getDownloadInformation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = View.inflate(this, R.layout.download_popup_layout, null);
+        view.setPadding(10, 10, 10, 10);
+
+        final EditText mapName = (EditText) view.findViewById(R.id.editText_name);
+        mapName.setHint("Beskrivende navn");
+
+        final SeekBar zoom_min = (SeekBar) view.findViewById(R.id.seekBar_min);
+        zoom_min.setMax(mMapView.getMaxZoomLevel());
+        zoom_min.setProgress(13);
+
+        final SeekBar zoom_max = (SeekBar) view.findViewById(R.id.seekBar_max);
+        zoom_max.setMax(mMapView.getMaxZoomLevel());
+        zoom_max.setProgress(16);
+
+        final TextView minLabel = (TextView) view.findViewById(R.id.label_number_min);
+        minLabel.setText(""+13);
+
+        final TextView maxLabel = (TextView) view.findViewById(R.id.label_number_max);
+        maxLabel.setText(""+16);
+
+        final TextView labelTiles = (TextView) view.findViewById(R.id.label_tiles);
+        int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), zoom_min.getProgress(), zoom_max.getProgress());
+        labelTiles.setText(tiles + " tiles å laste ned");
+
+        zoom_min.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                minLabel.setText(String.valueOf(progress));
+                int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), progress, zoom_max.getProgress());
+                labelTiles.setText(tiles + " tiles å laste ned");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        zoom_max.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                maxLabel.setText(String.valueOf(progress));
+                int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), zoom_min.getProgress(), progress);
+                labelTiles.setText(tiles + " tiles å laste ned");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        builder.setView(view);
+        builder.setPositiveButton("Ferdig", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String inputFromUser = mapName.getText().toString();
+                int min = zoom_min.getProgress();
+                int max = zoom_max.getProgress();
+
+                // Remove anything that is a space character and anything that is not a word character, and replace æøå
+                String nameOfArchival = inputFromUser.replaceAll("[\\s\\W]", "").replaceAll("æ","ae").replaceAll("ø","o").replaceAll("å","aa");
+
+                // Test printing
+                System.out.println("\n Input: " + inputFromUser + "\n");
+                System.out.println("\n Tittel på kartområde: " + nameOfArchival + "\n");
+                String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + nameOfArchival + ".sqlite";
+                System.out.println("\n Output name: " + outputName + "\n");
+                System.out.println("\n Min zoom: " + min + "\n");
+                System.out.println("\n Max zoom: " + max + "\n");
+
+                // Start the download with wanted name from user
+                startDownload(nameOfArchival, min, max);
+            }
+        });
+        builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                System.out.println("\n User clicked Avbryt !! \n");
+            }
+        });
+        builder.show();
+    }
+
+    private void startDownload(String downloadName, int minZoom, int maxZoom) {
         System.out.println("\n ARCHIVING START \n");
 
         try {
@@ -166,13 +265,8 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                     mMapView.getBoundingBox().getLatSouth(),
                     mMapView.getBoundingBox().getLonWest());
 
-            /*int minZoom = mMapView.getZoomLevel();
-            int maxZoom = (minZoom + 2 <= 20) ? minZoom+2 : 20;
-            System.out.println("\n MinZoom: " + minZoom + "\n");
-            System.out.println("\n MaxZoom: " + maxZoom + "\n");*/
-
-            //cacheManager.downloadAreaAsync(this, box, minZoom, maxZoom, new CacheManager.CacheManagerCallback() { ... });
-            cacheManager.downloadAreaAsync(this, box, 14, 16, new CacheManager.CacheManagerCallback() {
+            //cacheManager.downloadAreaAsync(this, box, 14, 16, new CacheManager.CacheManagerCallback() { ... });
+            cacheManager.downloadAreaAsync(this, box, minZoom, maxZoom, new CacheManager.CacheManagerCallback() {
                 @Override
                 public void onTaskComplete() {
                     Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
@@ -231,7 +325,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                 System.out.println("\n Output name: " + outputName + "\n");
 
                 // Start the download with wanted name from user
-                startDownload(nameOfArchival);
+                //startDownload(nameOfArchival);
             }
         });
         builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
@@ -252,7 +346,8 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         alertDialog.setPositiveButton("Ja", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 System.out.println("\n USER CLICKED YES \n");
-                getMapDownloadName();
+                //getMapDownloadName();
+                getDownloadInformation();
             }
         });
         alertDialog.setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
@@ -276,15 +371,6 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         mLocationOverlay.setEnabled(isOneProviderEnabled);
 
         animateToLocation = true;
-
-        //mLocationOverlay.enableFollowLocation();
-        //mLocationOverlay.enableMyLocation();
-
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
     }
 
 
@@ -292,7 +378,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(provider, 5000, 0, this);
+                mLocationManager.requestLocationUpdates(provider, 10*1000, 0, this);
                 result = true;
             }
         }

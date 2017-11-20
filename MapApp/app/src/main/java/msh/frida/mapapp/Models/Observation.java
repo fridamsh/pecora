@@ -11,18 +11,17 @@ public class Observation {
     private GeoPoint location;
     private String typeOfObservation;
     private String details;
+    private int sheepCount = 0;
+    private int id;
 
-    public Observation(GeoPoint location) {
+    public Observation(GeoPoint location, int id) {
         this.location = location;
+        this.id = id;
     }
 
     public GeoPoint getLocation() {
         return location;
     }
-
-    /*public void setLocation(GeoPoint location) {
-        this.location = location;
-    }*/
 
     public String getTypeOfObservation() {
         return typeOfObservation;
@@ -38,5 +37,21 @@ public class Observation {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public int getSheepCount() {
+        return sheepCount;
+    }
+
+    public void setSheepCount(int sheepCount) {
+        this.sheepCount = sheepCount;
+    }
+
+    public void increaseSheepCount(int sheepCount) {
+        this.sheepCount += sheepCount;
+    }
+
+    public int getId() {
+        return id;
     }
 }

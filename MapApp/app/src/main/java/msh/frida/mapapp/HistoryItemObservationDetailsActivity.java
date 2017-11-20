@@ -3,12 +3,16 @@ package msh.frida.mapapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
 import msh.frida.mapapp.Models.HikeModel;
+import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
 import msh.frida.mapapp.Other.HistoryItemObservationArrayAdapter;
 
@@ -28,17 +32,23 @@ public class HistoryItemObservationDetailsActivity extends AppCompatActivity {
         DatabaseHandler db = new DatabaseHandler(this);
         HikeModel hike = db.getHike(hikeId);
         db.close();
+        ObservationPoint point = hike.getObservationPoints().get(observationPointId);
 
         TextView time = (TextView) findViewById(R.id.textView_time);
-        time.setText("Kl. " + getTime(hike.getObservationPoints().get(observationPointId).getTimeOfObservation()));
+        time.setText("Kl. " + getTime(point.getTimeOfObservation()));
 
-        HistoryItemObservationArrayAdapter adapter = new HistoryItemObservationArrayAdapter(this,
-                hike.getObservationPoints().get(observationPointId).getObservationList());
-        ListView listViewObservation = (ListView) findViewById(R.id.listView_observations);
-        listViewObservation.setAdapter(adapter);
+        TextView sheepCount = (TextView) findViewById(R.id.textView_sheep);
+        sheepCount.setText("Antall sau: " + point.getSheepCount());
 
-        System.out.println("Hike with " + hike.getObservationPoints().size() + " observation points");
-
+        TextView labelNone = (TextView) findViewById(R.id.label_none);
+        if (point.getObservationList().isEmpty()) {
+            labelNone.setVisibility(View.VISIBLE);
+        } else {
+            HistoryItemObservationArrayAdapter adapter = new HistoryItemObservationArrayAdapter(this, point.getObservationList());
+            ListView listViewObservation = (ListView) findViewById(R.id.listView_observations);
+            listViewObservation.setVisibility(View.VISIBLE);
+            listViewObservation.setAdapter(adapter);
+        }
 
     }
 

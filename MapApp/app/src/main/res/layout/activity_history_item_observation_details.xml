@@ -3,18 +3,20 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_margin="20dp">
+    android:layout_margin="0dp">
 
     <TextView
         android:id="@+id/textView_observation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:paddingBottom="0px"
         android:textSize="24sp"
-        android:layout_marginBottom="10dp"
         android:textColor="@color/colorBlack"
-        android:text="Observasjoner"/>
+        android:text="Observasjoner"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/textView_time"
@@ -23,17 +25,46 @@
         android:layout_gravity="center_horizontal"
         android:paddingBottom="0px"
         android:textSize="20sp"
-        android:layout_marginBottom="30dp"
-        android:text="Kl. 13:14"/>
+        android:layout_marginBottom="10dp"
+        android:text="Kl. 13:14"
+        android:textAlignment="center"/>
+    <TextView
+        android:id="@+id/textView_sheep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="0px"
+        android:textSize="20sp"
+        android:layout_marginBottom="15dp"
+        android:text="Antall sau: 8"
+        android:textAlignment="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/label_none"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Ingen observasjoner å vise"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:paddingTop="30dp"/>
 
     <ListView
         android:id="@+id/listView_observations"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="5dp"
         android:clickable="false"
-        android:contextClickable="false"
-        android:dividerHeight="10dp"
-        android:divider="@android:color/transparent">
+        android:contextClickable="false">
     </ListView>
+    <!--android:dividerHeight="10dp"
+    android:divider="@android:color/transparent"-->
 
 </LinearLayout>

@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="90dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
-        android:id="@+id/layout"
+        android:id="@+id/icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:gravity="center_vertical">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Observasjonspunkt "
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack" />
-        <TextView
-            android:id="@+id/label"
+            android:id="@+id/label_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1"
+            android:textSize="26sp"
+            android:textColor="@color/colorBlack"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="1dp"
+        android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:background="@color/colorPrimary"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_marginRight="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_toRightOf="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="5dp"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/label_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kl. 12: 31"
+            android:textSize="16sp"
+            android:textColor="@color/colorBlack" />
+        <TextView
+            android:id="@+id/label_number_of_observations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Antall observasjoner: 3"
+            android:textSize="16sp"
+            android:textColor="@color/colorBlack" />
+        <TextView
+            android:id="@+id/label_sheep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Antall sau sett: 3"
             android:textSize="16sp"
             android:textColor="@color/colorBlack" />
     </LinearLayout>
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout"
-        android:layout_marginBottom="5dp">
-
-        <TableRow
-            android:layout_marginBottom="5dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Observasjoner: "
-                android:textSize="16sp"/>
-            <TextView
-                android:id="@+id/label2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="2"
-                android:textSize="16sp"/>
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Tid: "
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/label3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="12:47"
-                android:textSize="16sp"/>
-        </TableRow>
-
-    </TableLayout>
 
 </RelativeLayout>
