@@ -26,7 +26,7 @@ public class HikeSummaryActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         int hikeId = extras.getInt("hikeId");
-        double distanceWalked = extras.getDouble("distanceWalked");
+        //double distanceWalked = extras.getDouble("distanceWalked");
 
         DatabaseHandler db = new DatabaseHandler(this);
         HikeModel hikeModel = db.getHike(hikeId);
@@ -42,7 +42,8 @@ public class HikeSummaryActivity extends AppCompatActivity {
         tvDuration.setText(getDuration(hikeModel.getDateStart(), hikeModel.getDateEnd()));
 
         TextView tvDistance = (TextView) findViewById(R.id.textView_distance);
-        tvDistance.setText(Double.toString(distanceWalked) + " km");
+        double distanceWalked = hikeModel.getDistance();
+        tvDistance.setText(distanceWalked + " km");
 
         tvStart = (TextView) findViewById(R.id.textView_start);
         tvStart.setText(getTime(hikeModel.getDateStart()));

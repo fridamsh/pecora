@@ -102,6 +102,7 @@
                 </TableRow>
                 <TableRow
                     android:layout_marginBottom="0dp"
+                    android:paddingBottom="5dp"
                     android:layout_marginLeft="0dp">
                     <TextView
                         android:layout_width="wrap_content"
@@ -159,7 +160,7 @@
                     android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Detaljer"
+                    android:hint="Detaljer om sauen"
                     android:inputType="textCapSentences"/>
             </LinearLayout>
 
@@ -181,14 +182,14 @@
                     android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Hvordan rovdyr"
+                    android:hint="Detaljer om rovdyr"
                     android:inputType="textCapSentences"/>
             </LinearLayout>
 
-            <!--<LinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:orientation="vertical">
                 <CheckBox
                     android:id="@+id/checkBox_hunter"
@@ -203,10 +204,33 @@
                     android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Detaljer"
-                    android:inputType="number"
+                    android:hint="Detaljer om jeger"
+                    android:inputType="textCapSentences"
                     android:layout_marginRight="10dp"/>
-            </LinearLayout>-->
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/checkBox_dog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Løs hund"
+                    android:textSize="8pt"
+                    android:layout_marginRight="10dp"/>
+
+                <EditText
+                    android:id="@+id/editText_dog"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Detaljer om hund"
+                    android:inputType="textCapSentences"
+                    android:layout_marginRight="10dp"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

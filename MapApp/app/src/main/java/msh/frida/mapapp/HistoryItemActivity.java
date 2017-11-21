@@ -2,6 +2,7 @@ package msh.frida.mapapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,7 +53,7 @@ public class HistoryItemActivity extends AppCompatActivity {
         HikeModel hike = db.getHike(hikeId);
         db.close();
 
-        System.out.println("Tittel: " + hike.getTitle());
+        //System.out.println("Tittel: " + hike.getTitle());
 
         tvTitle = (TextView) findViewById(R.id.textView_title);
         tvTitle.setText(hike.getTitle());
@@ -68,7 +69,12 @@ public class HistoryItemActivity extends AppCompatActivity {
         labelSheepCount.setText("Antall sau sett: " + sheepCount);
 
         tvName = (TextView) findViewById(R.id.textView_name);
-        tvName.setText(hike.getName());
+        if (hike.getName().isEmpty()) {
+            tvName.setTypeface(tvName.getTypeface(), Typeface.ITALIC);
+            tvName.setText("Utilgjengelig");
+        } else {
+            tvName.setText(hike.getName());
+        }
 
         tvParticipants = (TextView) findViewById(R.id.textView_participants);
         tvParticipants.setText(Integer.toString(hike.getNumberOfParticipants()));
@@ -80,14 +86,27 @@ public class HistoryItemActivity extends AppCompatActivity {
         tvEnd.setText(getTime(hike.getDateEnd()));
 
         tvWeather = (TextView) findViewById(R.id.textView_weather);
-        tvWeather.setText(hike.getWeatherState());
+        if (hike.getWeatherState().isEmpty()) {
+            tvWeather.setTypeface(tvWeather.getTypeface(), Typeface.ITALIC);
+            tvWeather.setText("Utilgjengelig");
+        } else {
+            tvWeather.setText(hike.getWeatherState());
+        }
+
+        TextView tvDistance = (TextView) findViewById(R.id.textView_distance);
+        tvDistance.setText(hike.getDistance() + " km");
 
         tvMapFile = (TextView) findViewById(R.id.textView_map_name);
         String mapName = hike.getMapFileName();
         tvMapFile.setText(mapName.substring(0, mapName.lastIndexOf('.')));
 
         tvDetails = (TextView) findViewById(R.id.textView_details);
-        tvDetails.setText(hike.getDescription());
+        if (hike.getDescription().isEmpty()) {
+            tvDetails.setTypeface(tvDetails.getTypeface(), Typeface.ITALIC);
+            tvDetails.setText("Utilgjengelig");
+        } else {
+            tvDetails.setText(hike.getDescription());
+        }
 
         TextView labelNone = (TextView) findViewById(R.id.label_none);
         if (hike.getObservationPoints().isEmpty()) {

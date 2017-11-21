@@ -29,6 +29,7 @@ public class HikeModel implements Parcelable, Serializable {
     private List<ObservationPoint> observationPoints;
     private transient Polyline track;
     private List<GeoPoint> trackPoints;
+    private double distance;
 
     // Empty constructor
     public HikeModel() {}
@@ -40,8 +41,9 @@ public class HikeModel implements Parcelable, Serializable {
     }
 
     // Constructor
-    public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState, String description,
-                     long dateStart, long dateEnd, String mapFile, List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
+    public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState,
+                     String description, long dateStart, long dateEnd, String mapFile, double distance,
+                     List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.id = id;
         this.title = title;
         this.name = name;
@@ -51,13 +53,15 @@ public class HikeModel implements Parcelable, Serializable {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.mapFileName = mapFile;
+        this.distance = distance;
         this.observationPoints = observationPoints;
         this.trackPoints = trackPoints;
     }
 
     // Constructor
-    public HikeModel(String title, String name, int numberOfParticipants, String weatherState, String description, long dateStart,
-                     long dateEnd, String mapFile, List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
+    public HikeModel(String title, String name, int numberOfParticipants, String weatherState,
+                     String description, long dateStart, long dateEnd, String mapFile, double distance,
+                     List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.title = title;
         this.name = name;
         this.numberOfParticipants = numberOfParticipants;
@@ -66,6 +70,7 @@ public class HikeModel implements Parcelable, Serializable {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.mapFileName = mapFile;
+        this.distance = distance;
         this.observationPoints = observationPoints;
         this.trackPoints = trackPoints;
     }
@@ -152,6 +157,14 @@ public class HikeModel implements Parcelable, Serializable {
 
     public void setMapFileName(String mapFileName) {
         this.mapFileName = mapFileName;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public List<ObservationPoint> getObservationPoints() {

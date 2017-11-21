@@ -47,9 +47,10 @@
             android:id="@+id/label_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kl. 12: 31"
+            android:text="Kl. 12:31"
             android:textSize="16sp"
-            android:textColor="@color/colorBlack" />
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/label_number_of_observations"
             android:layout_width="wrap_content"

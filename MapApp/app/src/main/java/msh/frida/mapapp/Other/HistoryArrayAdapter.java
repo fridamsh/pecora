@@ -1,6 +1,7 @@
 package msh.frida.mapapp.Other;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,12 @@ public class HistoryArrayAdapter extends ArrayAdapter<HikeModel> {
         holder.textDay.setText(getDay(values.get(position).getDateStart()));
         holder.text.setText("Kl. " + getTime(values.get(position).getDateStart()));
         holder.text2.setText(values.get(position).getTitle());
-        holder.text3.setText("Gjeter: " + values.get(position).getName());
+        if (values.get(position).getName().isEmpty()) {
+            //holder.text3.setTypeface(holder.text3.getTypeface(), Typeface.ITALIC);
+            holder.text3.setText("Gjeter: Ikke tilgjengelig");
+        } else {
+            holder.text3.setText("Gjeter: " + values.get(position).getName());
+        }
         return view;
     }
 

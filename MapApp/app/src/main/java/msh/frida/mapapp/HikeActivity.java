@@ -245,6 +245,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     boolean startLocationUpdates() {
         boolean result = false;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Start location updates");
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3*1000, 1.0f, this);
             result = true;
         }
@@ -254,6 +255,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 result = true;
             }
         }*/
+        System.out.println("Result: "+result);
         return result;
     }
 
@@ -281,6 +283,10 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
+        // Remove location updates when hike is stopped
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+        }
         super.onBackPressed();
     }
 
@@ -294,6 +300,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                     if (list[i].getName().equals(fileName)) {
                         try {
                             //found the file we want
+                            System.out.println("Found the file we want");
 
                             //create the offline tile provider, it will only do offline file archives
                             OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this),
@@ -320,11 +327,14 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                                     //which probably won't match your offline tile source, unless it's MAPNIK
                                     source = tileSources.iterator().next();
                                     this.mMapView.setTileSource(FileBasedTileSource.getSource(source));
+                                    System.out.println("Source: " + source);
                                 } else {
                                     this.mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                                    System.out.println("Source: default");
                                 }
                             } else {
                                 this.mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                                System.out.println("Source: default");
                             }
 
                             Toast.makeText(getApplicationContext(), "Using " + list[i].getName(), Toast.LENGTH_SHORT).show();
@@ -476,6 +486,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         hikeModel.setDateEnd(Calendar.getInstance().getTimeInMillis());
         // TODO: Maybe add distance to HikeModel and DB?
         double distanceRoundOff = Math.round(distanceWalked * 100.0) / 100.0;
+        hikeModel.setDistance(distanceRoundOff);
 
         // Save trip to database
         DatabaseHandler db = new DatabaseHandler(this);
@@ -488,7 +499,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         // Start summary activity
         Intent intent1 = new Intent(this, HikeSummaryActivity.class);
         intent1.putExtra("hikeId", hike.getId());
-        intent1.putExtra("distanceWalked", distanceRoundOff);
+        //intent1.putExtra("distanceWalked", distanceRoundOff);
         startActivity(intent1);
     }
 
@@ -500,8 +511,10 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText et3;
     private CheckBox cb4;
     private EditText et4;
-    //private CheckBox cb5;
-    //private EditText et5;
+    private CheckBox cb5;
+    private EditText et5;
+    private CheckBox cb6;
+    private EditText et6;
 
     private Spinner sp1;
     private Spinner sp2;
@@ -587,7 +600,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         et4 = (EditText) checkboxLayout.findViewById(R.id.editText_predator);
-        /*cb5 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_hunter);
+        cb5 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_hunter);
         cb5.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (cb5.isChecked()) {
@@ -598,7 +611,19 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-        et5 = (EditText) checkboxLayout.findViewById(R.id.editText_hunter);*/
+        et5 = (EditText) checkboxLayout.findViewById(R.id.editText_hunter);
+        cb6 = (CheckBox) checkboxLayout.findViewById(R.id.checkBox_dog);
+        cb6.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (cb6.isChecked()) {
+                    et6.setVisibility(View.VISIBLE);
+                }
+                else {
+                    et6.setVisibility(View.GONE);
+                }
+            }
+        });
+        et6 = (EditText) checkboxLayout.findViewById(R.id.editText_dog);
 
         sp1 = (Spinner) checkboxLayout.findViewById(R.id.spinner_white_sheep);
         sp2 = (Spinner) checkboxLayout.findViewById(R.id.spinner_black_sheep);
@@ -674,20 +699,33 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 } else if (cb2.isChecked() && !TextUtils.isEmpty(et2.getText().toString())) {
                     currentObservation.setTypeOfObservation("Skadet sau");
                     currentObservation.setDetails(et2.getText().toString());
+                    currentObservation.setSheepCount(1);
+                    currentObservationPoint.increaseSheepCount(1);
                     observationMarker.setSubDescription("Skadet sau, detaljer: " + et2.getText().toString());
                 } else if (cb3.isChecked() && !TextUtils.isEmpty(et3.getText().toString())) {
                     currentObservation.setTypeOfObservation("Død sau");
                     currentObservation.setDetails(et3.getText().toString());
+                    currentObservation.setSheepCount(1);
+                    currentObservationPoint.increaseSheepCount(1);
                     observationMarker.setSubDescription("Død sau, detaljer: " + et3.getText().toString());
                 } else if (cb4.isChecked() && !TextUtils.isEmpty(et4.getText().toString())) {
                     currentObservation.setTypeOfObservation("Rovdyr");
                     currentObservation.setDetails(et4.getText().toString());
                     observationMarker.setSubDescription("Rovdyr, type: " + et4.getText().toString());
-                } /*else if (cb5.isChecked() && !TextUtils.isEmpty(et5.getText().toString())) {
-                    //currentObservation.setTypeOfObservation("Jeger");
-                    //currentObservation.setDetails(et5.getText().toString());
-                    //observationMarker.setSubDescription("Jeger, detaljer: " + et5.getText().toString());
-                }*/
+                } else if (cb5.isChecked() && !TextUtils.isEmpty(et5.getText().toString())) {
+                    currentObservation.setTypeOfObservation("Jeger");
+                    currentObservation.setDetails(et5.getText().toString());
+                    observationMarker.setSubDescription("Jeger, detaljer: " + et5.getText().toString());
+                } else if (cb6.isChecked() && !TextUtils.isEmpty(et6.getText().toString())) {
+                    currentObservation.setTypeOfObservation("Løs hund");
+                    currentObservation.setDetails(et6.getText().toString());
+                    observationMarker.setSubDescription("Løs hund, detaljer: " + et6.getText().toString());
+                }
+
+                //observationList.add(currentObservation);
+                // Add current observation to list with correct info
+                currentObservationPoint.getObservationList().add(currentObservation);
+
                 observationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker, MapView mapView) {
@@ -697,7 +735,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                             String id = marker.getTitle().substring(marker.getTitle().indexOf(' ')+1);
                             addSheepToEarlierObservation(Integer.parseInt(id), marker);
 
-                            Toast.makeText(getApplicationContext(), "Marker " + id + " clicked!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "Marker " + id + " clicked!", Toast.LENGTH_SHORT).show();
                         } else {
                             marker.showInfoWindow();
                         }
@@ -718,10 +756,6 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 mMapView.getOverlays().add(0, line);
 
                 mMapView.invalidate();
-
-                //observationList.add(currentObservation);
-                // Add current observation to list with correct info
-                currentObservationPoint.getObservationList().add(currentObservation);
 
                 // Make drawables visible and invisible again
                 imgCross.setVisibility(View.INVISIBLE);
@@ -779,6 +813,8 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                     line.setPoints(points);
                     mMapView.getOverlays().add(0, line);
 
+                    mMapView.invalidate();
+
                     Toast.makeText(getApplicationContext(),
                             "Endret antall sau for observasjon " + id + " fra " + previousCount + " til " + o.getSheepCount(),
                             Toast.LENGTH_SHORT).show();
@@ -793,6 +829,8 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
             });
 
             builder.show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Kan ikke endre sau sett fra dette punktet", Toast.LENGTH_LONG).show();
         }
     }
 

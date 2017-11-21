@@ -146,12 +146,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="0"
-                        android:text="Vær "
+                        android:text="Distanse "
                         android:textSize="16sp"
                         android:textColor="@color/colorGrey"
                         android:textStyle="bold"/>
                     <TextView
-                        android:id="@+id/textView_weather"
+                        android:id="@+id/textView_distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
@@ -180,7 +180,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="0"
-                        android:text="Detaljer"
+                        android:text="Vær "
+                        android:textSize="16sp"
+                        android:textColor="@color/colorGrey"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/textView_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_span="3"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBlack"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:text="Detaljer "
                         android:textSize="16sp"
                         android:textColor="@color/colorGrey"
                         android:textStyle="bold"/>

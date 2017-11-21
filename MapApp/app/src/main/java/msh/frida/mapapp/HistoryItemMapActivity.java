@@ -46,22 +46,40 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         hikeId = extras.getInt("hikeId");
         db = new DatabaseHandler(this);
         hike = db.getHike(hikeId);
+        System.out.println(hike.getMapFileName());
+        if (!hike.getObservationPoints().isEmpty()) {
+            mMapView = (MapView) findViewById(R.id.map);
+            mMapView.setUseDataConnection(false);
+            mMapView.setMinZoomLevel(13);
+            mMapView.setMaxZoomLevel(18);
+            mMapView.getController().setCenter(hike.getTrackPoints().get(0));
+            mMapView.getController().setZoom(15);
+            mMapView.setTilesScaledToDpi(true);
+            mMapView.setBuiltInZoomControls(true);
+            mMapView.setMultiTouchControls(true);
+            mMapView.setFlingEnabled(true);
 
-        mMapView = (MapView) findViewById(R.id.map);
-        mMapView.setUseDataConnection(false);
-        mMapView.setMinZoomLevel(13);
-        mMapView.setMaxZoomLevel(18);
-        mMapView.getController().setCenter(hike.getTrackPoints().get(0));
-        mMapView.getController().setZoom(15);
-        mMapView.setTilesScaledToDpi(true);
-        mMapView.setBuiltInZoomControls(true);
-        mMapView.setMultiTouchControls(true);
-        mMapView.setFlingEnabled(true);
+            mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
 
-        mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
+            getCachedMap(hike.getMapFileName());
+            putTrackAndMarkersOnMap();
+        } else {
+            mMapView = (MapView) findViewById(R.id.map);
+            mMapView.setUseDataConnection(false);
+            mMapView.setMinZoomLevel(13);
+            mMapView.setMaxZoomLevel(18);
+            mMapView.getController().setCenter(new GeoPoint(63.424289, 10.412866));
+            mMapView.getController().setZoom(15);
+            mMapView.setTilesScaledToDpi(true);
+            mMapView.setBuiltInZoomControls(true);
+            mMapView.setMultiTouchControls(true);
+            mMapView.setFlingEnabled(true);
 
-        getCachedMap(hike.getMapFileName());
-        putTrackAndMarkersOnMap();
+            mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
+
+            getCachedMap(hike.getMapFileName());
+        }
+
     }
 
     @Override
@@ -169,14 +187,11 @@ public class HistoryItemMapActivity extends AppCompatActivity {
 
                             //tell osmdroid to use that provider instead of the default rig which is asserts, cache, files/archives, online
                             mMapView.setTileProvider(tileProvider);
-                            /*minZoom = tileProvider.getMinimumZoomLevel();
-                            maxZoom = tileProvider.getMaximumZoomLevel();
-                            System.out.println("\n Min og maxzoom: " + minZoom + ", " + maxZoom);*/
 
                             //this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
                             //and should be ran asynchronously. we've put it inline for simplicity
 
-                            String source = "";
+                            String source;
                             IArchiveFile[] archives = tileProvider.getArchives();
                             if (archives.length > 0) {
                                 //cheating a bit here, get the first archive file and ask for the tile sources names it contains
@@ -188,11 +203,14 @@ public class HistoryItemMapActivity extends AppCompatActivity {
                                     //which probably won't match your offline tile source, unless it's MAPNIK
                                     source = tileSources.iterator().next();
                                     this.mMapView.setTileSource(FileBasedTileSource.getSource(source));
+                                    System.out.println("You came here");
                                 } else {
                                     this.mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                                    System.out.println("NOO");
                                 }
                             } else {
                                 this.mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                                System.out.println("NOOOOOOOOOO");
                             }
 
                             Toast.makeText(getApplicationContext(), "Using " + list[i].getName(), Toast.LENGTH_SHORT).show();
