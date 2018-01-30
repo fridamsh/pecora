@@ -2,10 +2,6 @@ package msh.frida.mapapp.Models;
 
 import org.osmdroid.util.GeoPoint;
 
-/**
- * Created by Frida on 01/11/2017.
- */
-
 public class Observation {
 
     private GeoPoint location;

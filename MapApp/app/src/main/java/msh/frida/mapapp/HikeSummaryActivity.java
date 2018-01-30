@@ -68,6 +68,12 @@ public class HikeSummaryActivity extends AppCompatActivity {
         labelSheep.setText(""+sheepCount);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     private String getDate(Long dateInMillis) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(dateInMillis);

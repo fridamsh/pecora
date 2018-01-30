@@ -1,7 +1,6 @@
 package msh.frida.mapapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,15 +13,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import msh.frida.mapapp.Models.HikeModel;
 import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
-import msh.frida.mapapp.Other.HistoryArrayAdapter;
 import msh.frida.mapapp.Other.HistoryItemArrayAdapter;
 
 public class HistoryItemActivity extends AppCompatActivity {

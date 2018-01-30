@@ -155,6 +155,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                 Intent intent1 = new Intent(this, HikeActivity.class);
                 intent1.putExtra("hikeObject", (Parcelable) hike);
                 startActivity(intent1);
+                finish();
                 break;
         }
     }

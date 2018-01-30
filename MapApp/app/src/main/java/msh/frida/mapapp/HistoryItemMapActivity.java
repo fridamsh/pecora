@@ -1,7 +1,5 @@
 package msh.frida.mapapp;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -53,7 +51,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
             mMapView.setMinZoomLevel(13);
             mMapView.setMaxZoomLevel(18);
             mMapView.getController().setCenter(hike.getTrackPoints().get(0));
-            mMapView.getController().setZoom(15);
+            mMapView.getController().setZoom(16);
             mMapView.setTilesScaledToDpi(true);
             mMapView.setBuiltInZoomControls(true);
             mMapView.setMultiTouchControls(true);

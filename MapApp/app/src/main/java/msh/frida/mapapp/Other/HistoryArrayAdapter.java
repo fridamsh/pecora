@@ -1,7 +1,6 @@
 package msh.frida.mapapp.Other;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +79,7 @@ public class HistoryArrayAdapter extends ArrayAdapter<HikeModel> {
         }
         return dateArray[1];
     }
+
     private String getDay(Long dateInMillis) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(dateInMillis);

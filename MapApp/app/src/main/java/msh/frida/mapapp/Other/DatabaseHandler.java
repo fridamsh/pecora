@@ -36,10 +36,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Name
     private static final String DATABASE_NAME = "hikesManager";
 
-    // Contacts table name
+    // Hike table name
     private static final String TABLE_HIKES = "hikes";
 
-    // Contacts Table Columns names
+    // Hike Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_NAME = "name";
@@ -89,7 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Adding new contact
+    // Adding new hike
     public void addHike(HikeModel hike) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -116,7 +116,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    // Getting single contact
+    // Getting single hike
     public HikeModel getHike(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -146,7 +146,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return hike;
     }
 
-    // Getting All Contacts
+    // Getting All hikes
     public List<HikeModel> getAllHikes() {
         List<HikeModel> hikeList = new ArrayList<>();
         // Select All Query
@@ -192,7 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return hikeList;
     }
 
-    // Getting contacts Count
+    // Getting hikes Count
     public int getHikesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_HIKES;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -206,7 +206,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return count;
     }
 
-    // Updating single contact
+    // Updating single hike
     public int updateHike(HikeModel hike) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -232,7 +232,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.update(TABLE_HIKES, values, KEY_ID + " = ?", new String[] { String.valueOf(hike.getId()) });
     }
 
-    // Deleting single contact
+    // Deleting single hike
     public void deleteHike(HikeModel hike) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_HIKES, KEY_ID + " = ?", new String[] { String.valueOf(hike.getId()) });

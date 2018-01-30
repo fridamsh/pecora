@@ -118,43 +118,35 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
         getCachedMap(fileName);
 
-        if (fileName.equals("bergenby.sqlite"))
+        if (fileName.equals("bymarka.sqlite"))
         {
-            // For testing since I am not in Bergen ;)
+            // For testing since I am not in bymarka ;)
             mMapView.setBuiltInZoomControls(true);
             mMapView.setMultiTouchControls(true);
             mMapController.setZoom(15);
-            GeoPoint point = new GeoPoint(60.391376, 5.322416);
+            GeoPoint point = new GeoPoint(63.416555, 10.267406);
             mMapController.setCenter(point);
 
         } else {
             provider = new GpsMyLocationProvider(this);
-            //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+            provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
             mLocationOverlay = new MyLocationNewOverlay(provider, mMapView);
             mLocationOverlay.enableMyLocation();
             mMapView.getOverlays().add(this.mLocationOverlay);
 
-            //this.mLocationOverlay = new DirectedLocationOverlay(this);
+            mMapController.setZoom(15);
 
-            if (fileName.equals("gloshaugen.sqlite"))
-            {
-                mMapController.setZoom(16);
-            } else {
-                mMapController.setZoom(15);
-            }
-            //mMapController.setZoom(minZoom); <- this would be nice
             mMapView.setTilesScaledToDpi(true);
             mMapView.setBuiltInZoomControls(true);
             mMapView.setMultiTouchControls(true);
             mMapView.setFlingEnabled(true);
-            //mMapView.setScrollableAreaLimitDouble(new BoundingBox());
 
-            track = new Polyline();
+            /*track = new Polyline();
             track.setWidth(5f);
             track.setColor(Color.BLUE);
             track.setGeodesic(true);
             trackingPoints = new ArrayList<>();
-            mMapView.getOverlayManager().add(0, track);
+            mMapView.getOverlayManager().add(0, track);*/
 
             // Creating the lists for observation points and observations
             observationPoints = new ArrayList<>();
@@ -200,38 +192,6 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        finish();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.removeUpdates(this);
-        }*/
-
-        animateToLocation = false;
-        System.out.println("Animate to location = " + animateToLocation);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
@@ -244,18 +204,18 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
     boolean startLocationUpdates() {
         boolean result = false;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             System.out.println("Start location updates");
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3*1000, 1.0f, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2*1000, 0.0f, this);
             result = true;
-        }
-        /*for (final String provider : mLocationManager.getProviders(true)) {
+        }*/
+        for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationManager.requestLocationUpdates(provider, 2*1000, 0.0f, this);
                 result = true;
             }
-        }*/
-        System.out.println("Result: "+result);
+        }
+        //System.out.println("Result: "+result);
         return result;
     }
 
@@ -308,9 +268,6 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
                             //tell osmdroid to use that provider instead of the default rig which is asserts, cache, files/archives, online
                             mMapView.setTileProvider(tileProvider);
-                            /*minZoom = tileProvider.getMinimumZoomLevel();
-                            maxZoom = tileProvider.getMaximumZoomLevel();
-                            System.out.println("\n Min og maxzoom: " + minZoom + ", " + maxZoom);*/
 
                             //this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
                             //and should be ran asynchronously. we've put it inline for simplicity
@@ -481,10 +438,9 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
         // Set relevant things in hike model
         hikeModel.setObservationPoints(observationPointsList);
-        hikeModel.setTrack(track);
+        //hikeModel.setTrack(track);
         hikeModel.setTrackPoints(track.getPoints());
         hikeModel.setDateEnd(Calendar.getInstance().getTimeInMillis());
-        // TODO: Maybe add distance to HikeModel and DB?
         double distanceRoundOff = Math.round(distanceWalked * 100.0) / 100.0;
         hikeModel.setDistance(distanceRoundOff);
 
@@ -501,6 +457,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         intent1.putExtra("hikeId", hike.getId());
         //intent1.putExtra("distanceWalked", distanceRoundOff);
         startActivity(intent1);
+        finish();
     }
 
     private CheckBox cb1;
@@ -779,7 +736,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
         final Observation o = findObservationInObservationPointsList(id);
 
-        if (o != null) {
+        if (o != null && o.getTypeOfObservation().equals("Sau")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Antall sau du vil legge til:");
 
@@ -794,7 +751,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                     int sheepCount = Integer.parseInt(inputFromUser);
                     int previousCount = o.getSheepCount();
                     o.increaseSheepCount(sheepCount);
-                    marker.setSubDescription("Antall: " + o.getSheepCount());
+                    marker.setSubDescription("Antall sau: " + o.getSheepCount());
 
                     // Increase the sheep count in current observation point
                     currentObservationPoint.increaseSheepCount(sheepCount);
@@ -830,7 +787,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
             builder.show();
         } else {
-            Toast.makeText(getApplicationContext(), "Kan ikke endre sau sett fra dette punktet", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Kan ikke endre sau sett for dette punktet", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -858,9 +815,9 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //--- LocationListener implementation ---
-    private final NetworkLocationIgnorer mIgnorer = new NetworkLocationIgnorer();
-    long mLastTime = 0; // milliseconds
-    double mSpeed = 0.0; // km/h
+    //private final NetworkLocationIgnorer mIgnorer = new NetworkLocationIgnorer();
+    //long mLastTime = 0; // milliseconds
+    //double mSpeed = 0.0; // km/h
     @Override
     public void onLocationChanged(Location location) {
         if (animateToLocation) {
@@ -874,6 +831,13 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 mMapView.getOverlays().add(0, startMarker);
                 mMapView.invalidate();
                 isStartMarkerPutOnMap = true;
+
+                track = new Polyline();
+                track.setWidth(5f);
+                track.setColor(Color.BLUE);
+                track.setGeodesic(true);
+                trackingPoints = new ArrayList<>();
+                mMapView.getOverlayManager().add(0, track);
             }
             animateToLocation = false;
             System.out.println("On location changed: animateToLocation = " + animateToLocation);
@@ -958,5 +922,37 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        finish();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+        }*/
+
+        animateToLocation = false;
+        System.out.println("Animate to location = " + animateToLocation);
     }
 }

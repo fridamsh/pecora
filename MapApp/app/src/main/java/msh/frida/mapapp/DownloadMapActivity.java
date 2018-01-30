@@ -4,32 +4,22 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.osmdroid.config.Configuration;
 import org.osmdroid.events.DelayedMapListener;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
@@ -41,7 +31,6 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -65,7 +54,8 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
     private boolean animateToLocation;
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_map);
 
@@ -104,7 +94,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-        // Sets the tile source to Kartverket's mMapView
+        // Sets the tile source to Kartverket
         mMapView.setTileSource(onlineTileSourceBase);
 
         cacheManager = new CacheManager(mMapView);
@@ -133,14 +123,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-/*            case R.id.cacheBtn:
-                cacheBtnClicked();
-                break;
-            case R.id.clearBtn:
-                new Thread(this).start();
-                break;*/
             case R.id.archiveImgBtn:
-                //archiveBtnClicked();
                 getDownloadInformation();
                 break;
             case R.id.imgBtnMyLocation:
@@ -176,14 +159,14 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
         final TextView labelTiles = (TextView) view.findViewById(R.id.label_tiles);
         int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), zoom_min.getProgress(), zoom_max.getProgress());
-        labelTiles.setText(tiles + " tiles å laste ned");
+        labelTiles.setText(tiles + " kartbilder å laste ned");
 
         zoom_min.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minLabel.setText(String.valueOf(progress));
                 int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), progress, zoom_max.getProgress());
-                labelTiles.setText(tiles + " tiles å laste ned");
+                labelTiles.setText(tiles + " kartbilder å laste ned");
             }
 
             @Override
@@ -202,7 +185,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maxLabel.setText(String.valueOf(progress));
                 int tiles = cacheManager.possibleTilesInArea(mMapView.getBoundingBox(), zoom_min.getProgress(), progress);
-                labelTiles.setText(tiles + " tiles å laste ned");
+                labelTiles.setText(tiles + " kartbilder å laste ned");
             }
 
             @Override
@@ -228,12 +211,12 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
                 String nameOfArchival = inputFromUser.replaceAll("[\\s\\W]", "").replaceAll("æ","ae").replaceAll("ø","o").replaceAll("å","aa");
 
                 // Test printing
-                System.out.println("\n Input: " + inputFromUser + "\n");
+                /*System.out.println("\n Input: " + inputFromUser + "\n");
                 System.out.println("\n Tittel på kartområde: " + nameOfArchival + "\n");
                 String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + nameOfArchival + ".sqlite";
                 System.out.println("\n Output name: " + outputName + "\n");
                 System.out.println("\n Min zoom: " + min + "\n");
-                System.out.println("\n Max zoom: " + max + "\n");
+                System.out.println("\n Max zoom: " + max + "\n");*/
 
                 // Start the download with wanted name from user
                 startDownload(nameOfArchival, min, max);
@@ -284,85 +267,23 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
                 @Override
                 public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                    // NOOP since we are using the build in UI
+                    // Using the build in UI
                 }
 
                 @Override
                 public void downloadStarted() {
-                    // NOOP since we are using the build in UI
+                    // NOOP Using the build in UI
                 }
 
                 @Override
                 public void setPossibleTilesInArea(int total) {
-                    // NOOP since we are using the build in UI
+                    // NOOP Using the build in UI
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void getMapDownloadName() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Tittel på kartområde:");
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String inputFromUser = input.getText().toString();
-
-                // Remove anything that is a space character and anything that is not a word character, and replace æøå
-                String nameOfArchival = inputFromUser.replaceAll("[\\s\\W]", "").replaceAll("æ","ae").replaceAll("ø","o").replaceAll("å","aa");
-
-                // Test printing
-                System.out.println("\n Input: " + inputFromUser + "\n");
-                System.out.println("\n Tittel på kartområde: " + nameOfArchival + "\n");
-                String outputName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "osmdroid" + File.separator + nameOfArchival + ".sqlite";
-                System.out.println("\n Output name: " + outputName + "\n");
-
-                // Start the download with wanted name from user
-                //startDownload(nameOfArchival);
-            }
-        });
-        builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                System.out.println("\n User clicked Avbryt !! \n");
-            }
-        });
-
-        builder.show();
-    }
-
-    private void archiveBtnClicked() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Last ned kart");
-        alertDialog.setMessage("Er du sikker på at du vil laste ned dette området?");
-        alertDialog.setPositiveButton("Ja", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                System.out.println("\n USER CLICKED YES \n");
-                //getMapDownloadName();
-                getDownloadInformation();
-            }
-        });
-        alertDialog.setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                System.out.println("\n USER CLICKED NO \n");
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = alertDialog.create();
-        alert.show();
-    }
-
-    /*private void clearCache() {
-        new Thread(this).start();
-    }*/
 
     public void onResume() {
         super.onResume();

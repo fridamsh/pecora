@@ -4,11 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,18 +24,12 @@ public class HikeModel implements Parcelable, Serializable {
     private long dateEnd;
     private String mapFileName;
     private List<ObservationPoint> observationPoints;
-    private transient Polyline track;
+    //private transient Polyline track;
     private List<GeoPoint> trackPoints;
     private double distance;
 
     // Empty constructor
     public HikeModel() {}
-
-    public HikeModel(String title, String name, String weatherState) {
-        this.title = title;
-        this.name = name;
-        this.weatherState = weatherState;
-    }
 
     // Constructor
     public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState,
@@ -59,7 +50,7 @@ public class HikeModel implements Parcelable, Serializable {
     }
 
     // Constructor
-    public HikeModel(String title, String name, int numberOfParticipants, String weatherState,
+    /*public HikeModel(String title, String name, int numberOfParticipants, String weatherState,
                      String description, long dateStart, long dateEnd, String mapFile, double distance,
                      List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.title = title;
@@ -73,7 +64,7 @@ public class HikeModel implements Parcelable, Serializable {
         this.distance = distance;
         this.observationPoints = observationPoints;
         this.trackPoints = trackPoints;
-    }
+    }*/
 
     // Constructor that takes a Parcel and gives you an object populated with it's values
     public HikeModel(Parcel in) {
@@ -175,13 +166,13 @@ public class HikeModel implements Parcelable, Serializable {
         this.observationPoints = observationPoints;
     }
 
-    public Polyline getTrack() {
+    /*public Polyline getTrack() {
         return track;
     }
 
     public void setTrack(Polyline track) {
         this.track = track;
-    }
+    }*/
 
     public List<GeoPoint> getTrackPoints() {
         return trackPoints;

@@ -7,8 +7,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.Calendar;
 
 import msh.frida.mapapp.Models.HikeModel;
@@ -61,7 +59,6 @@ public class HistoryItemObservationDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
     private String getTime(Long dateInMillis) {
