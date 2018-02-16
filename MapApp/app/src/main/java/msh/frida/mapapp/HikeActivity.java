@@ -47,8 +47,12 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +60,7 @@ import msh.frida.mapapp.Models.HikeModel;
 import msh.frida.mapapp.Models.Observation;
 import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
+import msh.frida.mapapp.Other.SessionManager;
 
 public class HikeActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
 
@@ -97,9 +102,18 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     private boolean animateToLocation;
     private boolean isStartMarkerPutOnMap;
 
+    // Session Manager Class
+    SessionManager sessionManager;
+    private String userId;
+
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hike);
+
+        // Need user ID from session
+        sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String, String> user = sessionManager.getUserDetails();
+        userId = user.get(SessionManager.KEY_ID);
 
         Bundle extras = getIntent().getExtras();
         hikeModel = new HikeModel();
@@ -157,14 +171,14 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
             //currentPoint = mLocationOverlay.getMyLocation();
             currentPoint = mLocationOverlay.getMyLocation();
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null) {
                     mMapController.animateTo(new GeoPoint(lastKnownLocation));
                     currentLocation = lastKnownLocation;
                     //onLocationChanged(lastKnownLocation);
                 }
-            }
+            }*/
 
             btnCenterMap = (ImageButton) findViewById(R.id.imgBtn_center_map);
             btnCenterMap.setOnClickListener(this);
@@ -443,21 +457,26 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         hikeModel.setDateEnd(Calendar.getInstance().getTimeInMillis());
         double distanceRoundOff = Math.round(distanceWalked * 100.0) / 100.0;
         hikeModel.setDistance(distanceRoundOff);
+        hikeModel.setUserId(userId);
 
         // Save trip to database
         DatabaseHandler db = new DatabaseHandler(this);
-        db.addHike(hikeModel);
-        List<HikeModel> list = db.getAllHikes();
+        long id = db.addHike(hikeModel);
         db.close();
-        HikeModel hike = list.get(list.size()-1);
-        Toast.makeText(getApplicationContext(), "Saved hike to database :)", Toast.LENGTH_SHORT).show();
 
-        // Start summary activity
-        Intent intent1 = new Intent(this, HikeSummaryActivity.class);
-        intent1.putExtra("hikeId", hike.getId());
-        //intent1.putExtra("distanceWalked", distanceRoundOff);
-        startActivity(intent1);
-        finish();
+        // Check to see if an error occurred during insertion
+        if (id == -1) { // If error occurred, don't do anything
+            Toast.makeText(getApplicationContext(), "Feil: Turen ble ikke lagret", Toast.LENGTH_SHORT).show();
+        } else { // If success, start Summary Activity with returned hike id
+            Toast.makeText(getApplicationContext(), "Turen ble lagret", Toast.LENGTH_SHORT).show();
+            System.out.println("Turen ble lagra med id: "+id);
+            // Start summary activity
+            Intent intent1 = new Intent(this, HikeSummaryActivity.class);
+            intent1.putExtra("hikeId", id);
+            //intent1.putExtra("distanceWalked", distanceRoundOff);
+            startActivity(intent1);
+            finish();
+        }
     }
 
     private CheckBox cb1;
@@ -838,6 +857,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 track.setGeodesic(true);
                 trackingPoints = new ArrayList<>();
                 mMapView.getOverlayManager().add(0, track);
+                System.out.println("\n\n HELLO!! I came here \n\n");
             }
             animateToLocation = false;
             System.out.println("On location changed: animateToLocation = " + animateToLocation);

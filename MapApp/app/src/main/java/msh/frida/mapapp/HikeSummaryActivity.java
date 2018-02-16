@@ -25,7 +25,7 @@ public class HikeSummaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hike_summary);
 
         Bundle extras = getIntent().getExtras();
-        int hikeId = extras.getInt("hikeId");
+        int hikeId = (int) extras.getLong("hikeId");
         //double distanceWalked = extras.getDouble("distanceWalked");
 
         DatabaseHandler db = new DatabaseHandler(this);

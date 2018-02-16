@@ -31,7 +31,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // All Static variables
 
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "hikesManager";
@@ -50,6 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_END_DATE = "enddate";
     private static final String KEY_MAP_FILE = "mapfile";
     private static final String KEY_DISTANCE = "distance";
+    private static final String KEY_USER_ID = "userId";
     private static final String KEY_OBSERVATION_POINTS = "observationPoints";
     private static final String KEY_TRACK_POINTS = "track";
 
@@ -72,8 +73,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_END_DATE + " TEXT,"
                 + KEY_MAP_FILE + " TEXT,"
                 + KEY_DISTANCE + " TEXT,"
+                + KEY_USER_ID + " TEXT,"
                 + KEY_OBSERVATION_POINTS + " TEXT,"
-                + KEY_TRACK_POINTS + " TEXT" + ")";
+                + KEY_TRACK_POINTS + " TEXT);";
         db.execSQL(CREATE_HIKES_TABLE);
     }
 
@@ -90,7 +92,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Adding new hike
-    public void addHike(HikeModel hike) {
+    public long addHike(HikeModel hike) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -103,6 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_END_DATE, hike.getDateEnd());
         values.put(KEY_MAP_FILE, hike.getMapFileName());
         values.put(KEY_DISTANCE, hike.getDistance());
+        values.put(KEY_USER_ID, hike.getUserId());
         // Make Gson objects of observation and track lists
         Gson gsonObservation = new Gson();
         String observationString = gsonObservation.toJson(hike.getObservationPoints());
@@ -112,8 +115,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_TRACK_POINTS, trackString);
 
         // Inserting row
-        db.insert(TABLE_HIKES, null, values);
+        long id = db.insert(TABLE_HIKES, null, values);
         db.close();
+
+        return id;
     }
 
     // Getting single hike
@@ -121,16 +126,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_HIKES,
-                new String[] { KEY_ID, KEY_TITLE, KEY_NAME, KEY_PARTICIPANTS, KEY_WEATHER, KEY_DESCRIPTION,
-                        KEY_START_DATE, KEY_END_DATE, KEY_MAP_FILE, KEY_DISTANCE, KEY_OBSERVATION_POINTS, KEY_TRACK_POINTS },
+                new String[] { KEY_ID, KEY_TITLE, KEY_NAME, KEY_PARTICIPANTS, KEY_WEATHER, KEY_DESCRIPTION, KEY_START_DATE,
+                        KEY_END_DATE, KEY_MAP_FILE, KEY_DISTANCE, KEY_USER_ID, KEY_OBSERVATION_POINTS, KEY_TRACK_POINTS },
                 KEY_ID + "=?",
                 new String[] { String.valueOf(id) },
                 null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        String cursorObservation = cursor.getString(10);
-        String cursorTrack = cursor.getString(11);
+        String cursorObservation = cursor.getString(11);
+        String cursorTrack = cursor.getString(12);
         // Make the observation and track strings into List-objects through Gson
         Type typeObservation = new TypeToken<List<ObservationPoint>>() {}.getType();
         Gson gsonObservation = new Gson();
@@ -142,7 +147,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         HikeModel hike = new HikeModel(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2),
                 Integer.parseInt(cursor.getString(3)), cursor.getString(4), cursor.getString(5), Long.valueOf(cursor.getString(6)),
-                Long.valueOf(cursor.getString(7)), cursor.getString(8), cursor.getDouble(9), observationList, trackList);
+                Long.valueOf(cursor.getString(7)), cursor.getString(8), cursor.getDouble(9), cursor.getString(10), observationList, trackList);
         return hike;
     }
 
@@ -169,9 +174,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 hike.setDateEnd(Long.valueOf(cursor.getString(7)));
                 hike.setMapFileName(cursor.getString(8));
                 hike.setDistance(cursor.getDouble(9));
-
+                hike.setUserId(cursor.getString(12));
                 String cursorObservation = cursor.getString(10);
                 String cursorTrack = cursor.getString(11);
+
                 // Make the observation and track strings into List-objects through Gson
                 Type typeObservation = new TypeToken<List<ObservationPoint>>() {}.getType();
                 Gson gsonObservation = new Gson();
@@ -220,6 +226,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_END_DATE, hike.getDateEnd());
         values.put(KEY_MAP_FILE, hike.getMapFileName());
         values.put(KEY_DISTANCE, hike.getDistance());
+        values.put(KEY_USER_ID, hike.getUserId());
         // Make Gson objects of observation and track lists
         Gson gsonObservation = new Gson();
         String observationString = gsonObservation.toJson(hike.getObservationPoints());

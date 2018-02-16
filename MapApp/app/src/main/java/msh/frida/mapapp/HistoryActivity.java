@@ -10,28 +10,48 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import msh.frida.mapapp.Models.HikeModel;
 import msh.frida.mapapp.Other.DatabaseHandler;
 import msh.frida.mapapp.Other.HistoryArrayAdapter;
+import msh.frida.mapapp.Other.SessionManager;
 
 public class HistoryActivity extends AppCompatActivity {
 
     private DatabaseHandler db;
+
+    // Session Manager Class
+    SessionManager sessionManager;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
+        // Need user ID from session
+        sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String, String> user = sessionManager.getUserDetails();
+        userId = user.get(SessionManager.KEY_ID);
+
         // Initialize db
         db = new DatabaseHandler(this);
         List<HikeModel> list = db.getAllHikes();
 
-        final HistoryArrayAdapter adapter = new HistoryArrayAdapter(this, list);
+        // Get the hikes that belong to the user that is logged in
+        List<HikeModel> userList = new ArrayList<>();
+        for (HikeModel hike : list) {
+            if (hike.getUserId().equals(userId)) {
+                userList.add(hike);
+            }
+        }
 
-        if (list.isEmpty()) {
+        final HistoryArrayAdapter adapter = new HistoryArrayAdapter(this, userList);
+
+        if (userList.isEmpty()) {
             TextView labelNone = (TextView) findViewById(R.id.label_none);
             labelNone.setVisibility(View.VISIBLE);
         } else {

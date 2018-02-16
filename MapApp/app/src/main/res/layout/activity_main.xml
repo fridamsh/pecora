@@ -3,82 +3,129 @@
     android:id="@+id/RelativeLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="0px"
     android:background="@color/colorPrimary">
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pecora"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="30dp"
-            android:textSize="20pt"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite"/>
-        <Button
-            android:id="@+id/btn_new_hike"
+        android:text="Pecora"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="20pt"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:layout_centerHorizontal="true"/>
 
-            android:text="Start ny oppsynstur"
-            android:textColor="#FFFFFF"
-            android:textSize="19sp"
+    <TextView
+        android:id="@+id/textViewWelcome"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test@gmail.com"
+        android:textSize="6pt"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"/>
 
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape_selector"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
+    <ImageButton
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/logout_selector"
+        android:layout_marginRight="5dp"
+        android:layout_below="@+id/textViewWelcome"
+        android:layout_alignParentRight="true"
+        android:scaleX="0.5"
+        android:scaleY="0.5" />
 
-            android:layout_marginBottom="15dp"
-            />
-        <Button
-            android:id="@+id/btn_download"
+    <Button
+        android:id="@+id/btn_new_hike"
+        android:layout_below="@+id/textViewTitle"
+        android:layout_centerHorizontal="true"
 
-            android:text="Last ned kart"
-            android:textColor="#FFFFFF"
-            android:textSize="19sp"
+        android:text="Start ny oppsynstur"
+        android:textColor="#FFFFFF"
+        android:textSize="19sp"
 
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape_selector"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape_selector"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
 
-            android:layout_marginBottom="15dp"
-            />
-        <Button
-            android:id="@+id/btn_history"
+        android:layout_marginBottom="15dp"
+        />
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_below="@+id/btn_new_hike"
+        android:layout_centerHorizontal="true"
 
-            android:text="Se historikk"
-            android:textColor="#FFFFFF"
-            android:textSize="19sp"
+        android:text="Last ned kart"
+        android:textColor="#FFFFFF"
+        android:textSize="19sp"
 
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape_selector"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape_selector"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
 
-            android:layout_marginBottom="30dp"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/picture_sheep_2"
-            android:layout_marginTop="0dp"
-            android:layout_gravity="center"
-            android:scaleX="0.8"
-            android:scaleY="0.8"
-            android:layout_marginBottom="40dp" />
-    </LinearLayout>
+        android:layout_marginBottom="15dp"
+        />
+    <Button
+        android:id="@+id/btn_history"
+        android:layout_below="@id/btn_download"
+        android:layout_centerHorizontal="true"
+
+        android:text="Se historikk"
+        android:textColor="#FFFFFF"
+        android:textSize="19sp"
+
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape_selector"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+
+        android:layout_marginBottom="15dp"
+        />
+
+    <Button
+        android:id="@+id/btn_sync"
+        android:layout_below="@+id/btn_history"
+        android:layout_centerHorizontal="true"
+
+        android:text="Synkroniser data"
+        android:textColor="#FFFFFF"
+        android:textSize="19sp"
+
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape_selector"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        />
+
+    <ImageView
+        android:id="@+id/imageViewSheep"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:background="@drawable/picture_sheep_2"
+        android:layout_marginBottom="10dp" />
 </RelativeLayout>

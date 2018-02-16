@@ -27,13 +27,14 @@ public class HikeModel implements Parcelable, Serializable {
     //private transient Polyline track;
     private List<GeoPoint> trackPoints;
     private double distance;
+    private String userId;
 
     // Empty constructor
     public HikeModel() {}
 
     // Constructor
     public HikeModel(int id, String title, String name, int numberOfParticipants, String weatherState,
-                     String description, long dateStart, long dateEnd, String mapFile, double distance,
+                     String description, long dateStart, long dateEnd, String mapFile, double distance, String userId,
                      List<ObservationPoint> observationPoints, List<GeoPoint> trackPoints) {
         this.id = id;
         this.title = title;
@@ -45,6 +46,7 @@ public class HikeModel implements Parcelable, Serializable {
         this.dateEnd = dateEnd;
         this.mapFileName = mapFile;
         this.distance = distance;
+        this.userId = userId;
         this.observationPoints = observationPoints;
         this.trackPoints = trackPoints;
     }
@@ -164,6 +166,14 @@ public class HikeModel implements Parcelable, Serializable {
 
     public void setObservationPoints(List<ObservationPoint> observationPoints) {
         this.observationPoints = observationPoints;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /*public Polyline getTrack() {

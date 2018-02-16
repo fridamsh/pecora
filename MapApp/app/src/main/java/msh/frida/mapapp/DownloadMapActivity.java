@@ -226,7 +226,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                System.out.println("\n User clicked Avbryt !! \n");
+                System.out.println("\n User clicked Avbryt \n");
             }
         });
         builder.show();
@@ -252,7 +252,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
             cacheManager.downloadAreaAsync(this, box, minZoom, maxZoom, new CacheManager.CacheManagerCallback() {
                 @Override
                 public void onTaskComplete() {
-                    Toast.makeText(getApplicationContext(), "Download complete!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Nedlastet kart", Toast.LENGTH_LONG).show();
                     if (writer!=null)
                         writer.onDetach();
                     System.out.println("\n ARCHIVING END \n");
@@ -260,7 +260,7 @@ public class DownloadMapActivity extends AppCompatActivity implements View.OnCli
 
                 @Override
                 public void onTaskFailed(int errors) {
-                    Toast.makeText(getApplicationContext(), "Download complete with " + errors + " errors", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Nedlastet med " + errors + " feil", Toast.LENGTH_LONG).show();
                     if (writer!=null)
                         writer.onDetach();
                 }
