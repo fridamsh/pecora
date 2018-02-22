@@ -39,7 +39,6 @@ import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
@@ -47,9 +46,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -434,7 +430,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         observationPoints.add(observationPointLocation);
         // New observation point, clear it if it exists
         currentObservationPoint = new ObservationPoint(observationPointLocation);
-        currentObservationPoint.setTimeOfObservation(Calendar.getInstance().getTimeInMillis());
+        currentObservationPoint.setTimeOfObservationPoint(Calendar.getInstance().getTimeInMillis());
 
         Marker observationMarker = new Marker(mMapView);
         observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
@@ -642,8 +638,8 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 GeoPoint observationLocation = (GeoPoint) mMapView.getMapCenter();
                 observations.add(observationLocation);
-                currentObservation = new Observation(observationLocation, observationId);
-                observationId += 1;
+                currentObservation = new Observation(observationLocation);
+                //observationId += 1;
 
                 // Update the map with marker
                 Marker observationMarker = new Marker(mMapView);

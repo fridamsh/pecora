@@ -33,7 +33,7 @@ public class HistoryItemObservationDetailsActivity extends AppCompatActivity {
         ObservationPoint point = hike.getObservationPoints().get(observationPointId);
 
         TextView time = (TextView) findViewById(R.id.textView_time);
-        time.setText("Kl. " + getTime(point.getTimeOfObservation()));
+        time.setText("Kl. " + getTime(point.getTimeOfObservationPoint()));
 
         TextView sheepCount = (TextView) findViewById(R.id.textView_sheep);
         sheepCount.setText("Antall sau: " + point.getSheepCount());

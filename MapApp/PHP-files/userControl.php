@@ -24,7 +24,8 @@ include_once 'connection2.php';
 				$query = "Insert into user(username, password) values('$email','$password')";
 				$inserted = mysqli_query($this -> connection, $query);
 				if ($inserted == 1) {
-					$json['success'] = 'Account created';
+					$id = mysqli_insert_id($this -> connection);
+					$json['success'] = 'Id:'. $id . ' Account created';
 				} else {
 					$json['error'] = 'Wrong password';
 				}

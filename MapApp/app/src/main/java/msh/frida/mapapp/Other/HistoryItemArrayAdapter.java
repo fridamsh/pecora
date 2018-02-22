@@ -54,7 +54,7 @@ public class HistoryItemArrayAdapter extends ArrayAdapter<ObservationPoint> {
         }
         HistoryItemArrayAdapter.ViewHolder holder = (HistoryItemArrayAdapter.ViewHolder) view.getTag();
         holder.text.setText(Integer.toString(position+1));
-        holder.text2.setText("Kl. " + getTime(values.get(position).getTimeOfObservation()));
+        holder.text2.setText("Kl. " + getTime(values.get(position).getTimeOfObservationPoint()));
         holder.text3.setText("Antall observasjoner: " + Integer.toString(values.get(position).getObservationList().size()));
         holder.text4.setText("Antall sau sett: " + Integer.toString(values.get(position).getSheepCount()));
         return view;

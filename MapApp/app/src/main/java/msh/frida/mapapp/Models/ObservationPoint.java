@@ -4,6 +4,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Frida on 01/11/2017.
@@ -11,27 +12,30 @@ import java.util.List;
 
 public class ObservationPoint {
 
+    private static final AtomicInteger count = new AtomicInteger(0);
 
-    private GeoPoint location;
-    private long timeOfObservation;
+    private GeoPoint locationPoint;
     private List<Observation> observationList;
+    private final int pointId;
     private int sheepCount = 0;
+    private long timeOfObservationPoint;
 
     public ObservationPoint(GeoPoint location) {
-        this.location = location;
+        this.pointId = count.incrementAndGet();
+        this.locationPoint = location;
         observationList = new ArrayList<>();
     }
 
     public GeoPoint getLocation() {
-        return location;
+        return locationPoint;
     }
 
-    public long getTimeOfObservation() {
-        return timeOfObservation;
+    public long getTimeOfObservationPoint() {
+        return timeOfObservationPoint;
     }
 
-    public void setTimeOfObservation(long timeOfObservation) {
-        this.timeOfObservation = timeOfObservation;
+    public void setTimeOfObservationPoint(long timeOfObservationPoint) {
+        this.timeOfObservationPoint = timeOfObservationPoint;
     }
 
     public List<Observation> getObservationList() {

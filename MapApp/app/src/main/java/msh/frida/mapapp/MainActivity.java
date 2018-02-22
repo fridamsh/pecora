@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +49,12 @@ import msh.frida.mapapp.Other.SessionManager;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Alert Dialog Manager
-    AlertDialogManager alert = new AlertDialogManager();
+    private AlertDialogManager alert = new AlertDialogManager();
+
+    private RequestQueue requestQueue;
+    private String insertUrl = "http://35.178.58.115/pecora/insertHike.php";
+    private HikeModel hike;
+    private int numberOfSyncedHikes;
 
     // Session Manager Class
     SessionManager sessionManager;
@@ -78,15 +84,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // get user data from session
         HashMap<String, String> user = sessionManager.getUserDetails();
-
+        System.out.println(user.get(SessionManager.KEY_ID)+" "+user.get(SessionManager.KEY_FIRST)+" "+
+                user.get(SessionManager.KEY_LAST)+" "+user.get(SessionManager.KEY_EMAIL)+" "+user.get(SessionManager.KEY_USERNAME));
         // username
-        String name = user.get(SessionManager.KEY_USERNAME);
+        String name = user.get(SessionManager.KEY_FIRST);
         userId = user.get(SessionManager.KEY_ID);
         System.out.println("Id: "+userId);
 
         // displaying user data
         TextView welcome = (TextView) findViewById(R.id.textViewWelcome);
-        welcome.setText("" + name);
+        welcome.setText("Hei, " + name + "!");
 
         Button btnNewHike = (Button) findViewById(R.id.btn_new_hike);
         btnNewHike.setOnClickListener(this);
@@ -159,11 +166,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(getApplicationContext(), "Du er nå logget ut", Toast.LENGTH_SHORT).show();
     }
 
-    RequestQueue requestQueue;
-    String insertUrl = "http://35.178.58.115/pecora/insertHike3.php";
-    HikeModel hike;
-    int numberOfSyncedHikes;
-
     private void synchronizeData() {
         DatabaseHandler db = new DatabaseHandler(this);
         List<HikeModel> hikes = db.getAllHikes();
@@ -218,8 +220,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         parameters.put("enddate", String.valueOf(hike.getDateEnd()));
                         parameters.put("mapfile", hike.getMapFileName());
                         parameters.put("distance", String.valueOf(hike.getDistance()));
-                        parameters.put("observationPoints", String.valueOf(hike.getObservationPoints()));
-                        parameters.put("track", String.valueOf(hike.getTrackPoints()));
+
+                        // JSON conversion of observation points
+                        Gson gsonObservationPoints = new Gson();
+                        String observationPointsString = gsonObservationPoints.toJson(hike.getObservationPoints());
+                        parameters.put("observationPoints", observationPointsString);
+                        // JSON conversion of track
+                        Gson gsonTrack = new Gson();
+                        String trackString = gsonTrack.toJson(hike.getTrackPoints());
+                        parameters.put("track", trackString);
+
                         parameters.put("userId", userId);
                         parameters.put("localId", String.valueOf(hike.getId()));
                         return parameters;
@@ -227,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 };
                 requestQueue.add(request);
             }
-            //Toast.makeText(getApplicationContext(), numberOfSyncedHikes+" hikes were synchronized.", Toast.LENGTH_SHORT).show();
         }
     }
 

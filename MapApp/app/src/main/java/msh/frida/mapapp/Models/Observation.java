@@ -2,21 +2,25 @@ package msh.frida.mapapp.Models;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Observation {
 
-    private GeoPoint location;
-    private String typeOfObservation;
-    private String details;
-    private int sheepCount = 0;
-    private int id;
+    private static final AtomicInteger count = new AtomicInteger(0);
 
-    public Observation(GeoPoint location, int id) {
-        this.location = location;
-        this.id = id;
+    private String details;
+    private GeoPoint locationObservation;
+    private int observationId;
+    private int sheepCount = 0;
+    private String typeOfObservation;
+
+    public Observation(GeoPoint location) {
+        this.locationObservation = location;
+        this.observationId = count.incrementAndGet();
     }
 
     public GeoPoint getLocation() {
-        return location;
+        return locationObservation;
     }
 
     public String getTypeOfObservation() {
@@ -48,6 +52,6 @@ public class Observation {
     }
 
     public int getId() {
-        return id;
+        return observationId;
     }
 }
