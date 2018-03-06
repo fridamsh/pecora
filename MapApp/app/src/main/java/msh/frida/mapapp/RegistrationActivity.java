@@ -32,7 +32,7 @@ public class RegistrationActivity extends AppCompatActivity {
     AlertDialogManager alert = new AlertDialogManager();
 
     private RequestQueue requestQueue;
-    private static final String URL = "http://35.178.58.115/pecora/registerUser.php";
+    private static final String URL = "http://129.241.104.237/pecora-web/app/registerUser.php";
     private StringRequest request;
 
     @Override

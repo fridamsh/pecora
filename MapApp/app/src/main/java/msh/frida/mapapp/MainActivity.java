@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AlertDialogManager alert = new AlertDialogManager();
 
     private RequestQueue requestQueue;
-    private String insertUrl = "http://35.178.58.115/pecora/insertHike.php";
+    private String insertUrl = "http://129.241.104.237/pecora-web/app/insertHike.php";
     private HikeModel hike;
     private int numberOfSyncedHikes;
 

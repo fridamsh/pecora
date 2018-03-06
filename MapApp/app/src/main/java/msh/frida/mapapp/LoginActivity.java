@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username, password;
     private TextView register;
     private RequestQueue requestQueue;
-    private static final String URL = "http://35.178.58.115/pecora/loginUser.php";
+    private static final String URL = "http://129.241.104.237/pecora-web/app/loginUser.php";
     private StringRequest request;
 
     AlertDialogManager alert = new AlertDialogManager();
