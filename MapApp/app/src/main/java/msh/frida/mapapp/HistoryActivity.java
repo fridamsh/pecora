@@ -85,6 +85,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void startHistoryItemActivity(int hikeId) {
         Intent intent = new Intent(this, HistoryItemActivity.class);
+        System.out.println("HIKE ID: "+hikeId);
         intent.putExtra("hikeId", hikeId);
         startActivity(intent);
     }
