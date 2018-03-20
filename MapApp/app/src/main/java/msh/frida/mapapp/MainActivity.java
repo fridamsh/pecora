@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AlertDialogManager alert = new AlertDialogManager();
 
     private RequestQueue requestQueue;
-    private String insertUrl = "http://129.241.104.237/pecora-web/app/insertHike.php";
+    private String insertUrl = "https://pecora.no/app/insertHike.php";
     private HikeModel hike;
     private int numberOfSyncedHikes;
 
@@ -193,9 +193,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.names().get(0).equals("success")) {
                                 numberOfSyncedHikes++;
-                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("success")+ " (Nr. "+numberOfSyncedHikes+")", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("success")+ " ("+numberOfSyncedHikes+")", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("error"), Toast.LENGTH_SHORT).show();
+                                numberOfSyncedHikes++;
+                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("error")+ " ("+numberOfSyncedHikes+")", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

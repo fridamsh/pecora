@@ -19,6 +19,10 @@ public class Observation {
         this.observationId = count.incrementAndGet();
     }
 
+    public void resetId() {
+        count.set(0);
+    }
+
     public GeoPoint getLocation() {
         return locationObservation;
     }

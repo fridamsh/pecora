@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -58,7 +59,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
         });
 
         mapSpinner = (Spinner) findViewById(R.id.map_spinner);
-        List<String> mapItems = getCachedMaps();
+        List<String> mapItems = getCachedMapNames();
         ArrayAdapter<String> mapAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mapItems);
         mapSpinner.setAdapter(mapAdapter);
         mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -104,7 +105,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
         finish();
     }
 
-    private List<String> getCachedMaps() {
+    private List<String> getCachedMapNames() {
         //first we'll look at the default location for tiles that we support
         File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/osmdroid/");
         if (f.exists()) {
@@ -127,8 +128,10 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                         continue; //skip files with no extension name after "."
                     }
                     if (ArchiveFileFactory.isFileExtensionRegistered(name)) { //if file extension is registered
-                        supportedFilesString.add(stringList[i]);
-                        //supportedFiles.add(list[i]);
+                        String fileName = stringList[i].split("\\.")[0];
+                        System.out.println("File name: "+fileName);
+                        //supportedFilesString.add(stringList[i]);
+                        supportedFilesString.add(fileName);
                     }
                 }
             }
@@ -143,10 +146,22 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
             case R.id.btn_start_hike:
                 System.out.println("\n CLICKED! \n");
                 hike.setTitle(getHikeTitle());
-                hike.setName(etName.getText().toString());
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setName("Ukjent");
+                } else {
+                    hike.setName(etName.getText().toString());
+                }
                 hike.setNumberOfParticipants(Integer.parseInt(stParticipants));
-                hike.setWeatherState(etWeather.getText().toString());
-                hike.setDescription(etDescription.getText().toString());
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setWeatherState("Ukjent");
+                } else {
+                    hike.setWeatherState(etWeather.getText().toString());
+                }
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setDescription("Ukjent");
+                } else {
+                    hike.setDescription(etDescription.getText().toString());
+                }
                 hike.setMapFileName(chosenFileName);
                 hike.setDateStart(Calendar.getInstance().getTimeInMillis());
                 System.out.println(Calendar.getInstance().getTimeInMillis());
@@ -193,13 +208,15 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
 
-        if (Integer.parseInt(hour) < 12 && Integer.parseInt(hour) > 6) {
+        if (Integer.parseInt(hour) < 9 && Integer.parseInt(hour) >= 6) {
             title += "morgen";
+        } else if (Integer.parseInt(hour) >= 9 && Integer.parseInt(hour) < 12) {
+            title += "formiddag";
         } else if (Integer.parseInt(hour) >= 12 && Integer.parseInt(hour) < 18) {
             title += "ettermiddag";
         } else if (Integer.parseInt(hour) >= 18 && Integer.parseInt(hour) <= 23) {
             title += "kveld";
-        } else if (Integer.parseInt(hour) >= 0 && Integer.parseInt(hour) <= 6) {
+        } else if (Integer.parseInt(hour) >= 0 && Integer.parseInt(hour) < 6) {
             title += "natt";
         }
 

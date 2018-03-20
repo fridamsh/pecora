@@ -94,7 +94,12 @@ public class HistoryItemActivity extends AppCompatActivity {
 
         tvMapFile = (TextView) findViewById(R.id.textView_map_name);
         String mapName = hike.getMapFileName();
-        tvMapFile.setText(mapName.substring(0, mapName.lastIndexOf('.')));
+        if (mapName.contains(".sqlite")) {
+            tvMapFile.setText(mapName.substring(0, mapName.lastIndexOf('.')));
+        } else {
+            tvMapFile.setText(mapName);
+        }
+
 
         tvDetails = (TextView) findViewById(R.id.textView_details);
         if (hike.getDescription().isEmpty()) {
