@@ -9,6 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/btn_obs_point_save"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:visibility="invisible"
+
+        android:text="Lagre"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:background="@drawable/buttonshape_hike"
+        />
+
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +46,21 @@
         android:id="@+id/imgBtn_new_observation"
         android:src="@drawable/icon_new_obs_green"
         android:layout_below="@+id/imgBtn_new_point"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#00ffffff"
+        android:contentDescription=""
+        android:cropToPadding="true"
+        android:visibility="invisible"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtn_camera"
+        android:src="@drawable/icon_camera"
+        android:layout_below="@+id/imgBtn_new_observation"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
@@ -129,16 +161,30 @@
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/btn_observation_cancel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:text="Avbryt"
                 android:layout_column="0"
-                android:text="Avbryt"/>
+
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/buttonshape_hike"
+
+                android:layout_marginRight="10dp"
+                />
             <Button
                 android:id="@+id/btn_observation_ok"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:text="Ok"
                 android:layout_column="1"
-                android:text="Ok"/>
+
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/buttonshape_hike"
+                />
         </TableRow>
     </TableLayout>
 

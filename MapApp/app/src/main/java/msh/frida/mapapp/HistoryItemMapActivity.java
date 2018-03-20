@@ -59,7 +59,14 @@ public class HistoryItemMapActivity extends AppCompatActivity {
 
             mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
 
-            getCachedMap(hike.getMapFileName());
+            //getCachedMap(hike.getMapFileName());
+            if (hike.getMapFileName().contains(".sqlite")) {
+                System.out.println("Filename contains .sqlite");
+                getCachedMap(hike.getMapFileName());
+            } else {
+                System.out.println("Filename does not contain .sqlite");
+                getCachedMap(hike.getMapFileName()+".sqlite");
+            }
             putTrackAndMarkersOnMap();
         } else {
             mMapView = (MapView) findViewById(R.id.map);
@@ -75,7 +82,13 @@ public class HistoryItemMapActivity extends AppCompatActivity {
 
             mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
 
-            getCachedMap(hike.getMapFileName());
+            if (hike.getMapFileName().contains(".sqlite")) {
+                System.out.println("Filename contains .sqlite");
+                getCachedMap(hike.getMapFileName());
+            } else {
+                System.out.println("Filename does not contain .sqlite");
+                getCachedMap(hike.getMapFileName()+".sqlite");
+            }
         }
 
     }
@@ -116,20 +129,20 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         mMapView.getOverlays().add(endMarker);
 
         // Put observation point and observation markers on map
-        int i = 1;
-        int j = 1;
+        //int i = 1;
+        //int j = 1;
         for (ObservationPoint op : hike.getObservationPoints()) {
             Marker opMarker = new Marker(mMapView);
             opMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
             opMarker.setPosition(op.getLocation());
-            opMarker.setTitle("Observasjonspunkt " + i);
+            opMarker.setTitle("Observasjonspunkt " + op.getPointId());
             opMarker.setSubDescription("Antall observasjoner: " + op.getObservationList().size());
             mMapView.getOverlays().add(opMarker);
             for (Observation o : op.getObservationList()) {
                 Marker oMarker = new Marker(mMapView);
                 oMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_dot_yellow_small));
                 oMarker.setPosition(o.getLocation());
-                oMarker.setTitle("Observasjon " + j);
+                oMarker.setTitle("Observasjon " + o.getId());
                 if (o.getTypeOfObservation().equals("Sau")) {
                     oMarker.setSubDescription("Type observasjon: " + o.getTypeOfObservation() + ", antall: " + o.getSheepCount());
                 } else {
@@ -147,9 +160,9 @@ public class HistoryItemMapActivity extends AppCompatActivity {
                 oTrack.setPoints(points);
                 mMapView.getOverlayManager().add(0, oTrack);
 
-                j++;
+                //j++;
             }
-            i++;
+            //i++;
             //j = 1;
         }
 

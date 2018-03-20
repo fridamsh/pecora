@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username, password;
     private TextView register;
     private RequestQueue requestQueue;
-    private static final String URL = "http://129.241.104.237/pecora-web/app/loginUser.php";
+    private static final String URL = "https://pecora.no/app/loginUser.php";
     private StringRequest request;
 
     AlertDialogManager alert = new AlertDialogManager();
@@ -84,10 +84,15 @@ public class LoginActivity extends AppCompatActivity {
                         public void onResponse(String response) {
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
+
                                 if (jsonObject.names().get(0).equals("success")) {
-                                    String[] userData = jsonObject.getString("success").split(" ");
-                                    System.out.println("User ID: "+userData[0]);
-                                    sessionManager.createLoginSession(userData[0], userData[1], userData[2], userData[3], userData[4]);
+                                    String id = jsonObject.getString("id");
+                                    String firstname = jsonObject.getString("first");
+                                    String lastname = jsonObject.getString("last");
+                                    String email = jsonObject.getString("email");
+                                    String username = jsonObject.getString("username");
+
+                                    sessionManager.createLoginSession(id, firstname, lastname, email, username);
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();
                                 } else {
@@ -96,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                                     if (errorMessage.equals("You must type both inputs.")) {
                                         System.out.println(jsonObject.getString("error"));
                                         alert.showAlertDialog(LoginActivity.this, "Logg inn feilet", "Både brukernavn og passord må fylles ut", false);
-                                        //Toast.makeText(getApplicationContext(), ""+jsonObject.getString("error"), Toast.LENGTH_SHORT).show();
                                     } else {
                                         System.out.println(jsonObject.getString("error"));
                                         alert.showAlertDialog(LoginActivity.this, "Logg inn feilet", "Passordet er feil", false);

@@ -26,6 +26,14 @@ public class ObservationPoint {
         observationList = new ArrayList<>();
     }
 
+    public void resetId() {
+        count.set(0);
+    }
+
+    public int getPointId() {
+        return pointId;
+    }
+
     public GeoPoint getLocation() {
         return locationPoint;
     }
