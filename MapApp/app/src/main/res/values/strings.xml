@@ -9,6 +9,9 @@
     <string name="history_item_activity_name">Historikk</string>
     <string name="history_item_observation_activity_name">Historikk</string>
     <string name="hike_summary_activity_name">Oppsummering</string>
+    <string name="demo_hike_activity_name">Ny demotur</string>
+    <string name="login_activity_name">Logg inn</string>
+    <string name="register_activity_name">Registrering</string>
 
     <string name="bt_center_map_description">Center on my location</string>
     <string name="bt_follow_me_description">Follow me</string>

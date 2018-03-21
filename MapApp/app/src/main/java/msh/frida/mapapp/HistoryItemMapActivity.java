@@ -45,7 +45,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         db = new DatabaseHandler(this);
         hike = db.getHike(hikeId);
         System.out.println(hike.getMapFileName());
-        if (!hike.getObservationPoints().isEmpty()) {
+        if (!hike.getObservationPoints().isEmpty() && !hike.getTrackPoints().isEmpty()) {
             mMapView = (MapView) findViewById(R.id.map);
             mMapView.setUseDataConnection(false);
             mMapView.setMinZoomLevel(13);
@@ -67,7 +67,30 @@ public class HistoryItemMapActivity extends AppCompatActivity {
                 System.out.println("Filename does not contain .sqlite");
                 getCachedMap(hike.getMapFileName()+".sqlite");
             }
-            putTrackAndMarkersOnMap();
+            putTrackOnMap();
+            putMarkersOnMap();
+        } else if (!hike.getTrackPoints().isEmpty()) {
+            mMapView = (MapView) findViewById(R.id.map);
+            mMapView.setUseDataConnection(false);
+            mMapView.setMinZoomLevel(13);
+            mMapView.setMaxZoomLevel(18);
+            mMapView.getController().setCenter(new GeoPoint(63.424289, 10.412866));
+            mMapView.getController().setZoom(15);
+            mMapView.setTilesScaledToDpi(true);
+            mMapView.setBuiltInZoomControls(true);
+            mMapView.setMultiTouchControls(true);
+            mMapView.setFlingEnabled(true);
+
+            mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
+
+            if (hike.getMapFileName().contains(".sqlite")) {
+                System.out.println("Filename contains .sqlite");
+                getCachedMap(hike.getMapFileName());
+            } else {
+                System.out.println("Filename does not contain .sqlite");
+                getCachedMap(hike.getMapFileName()+".sqlite");
+            }
+            putTrackOnMap();
         } else {
             mMapView = (MapView) findViewById(R.id.map);
             mMapView.setUseDataConnection(false);
@@ -104,7 +127,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void putTrackAndMarkersOnMap() {
+    private void putTrackOnMap() {
         // Put track on map
         Polyline track = new Polyline();
         track.setWidth(5f);
@@ -127,10 +150,9 @@ public class HistoryItemMapActivity extends AppCompatActivity {
         endMarker.setTitle("Sluttpunkt");
         endMarker.setSubDescription("Kl. " + getTime(hike.getDateEnd()));
         mMapView.getOverlays().add(endMarker);
+    }
 
-        // Put observation point and observation markers on map
-        //int i = 1;
-        //int j = 1;
+    private void putMarkersOnMap() {
         for (ObservationPoint op : hike.getObservationPoints()) {
             Marker opMarker = new Marker(mMapView);
             opMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
@@ -159,11 +181,7 @@ public class HistoryItemMapActivity extends AppCompatActivity {
                 points.add(o.getLocation());
                 oTrack.setPoints(points);
                 mMapView.getOverlayManager().add(0, oTrack);
-
-                //j++;
             }
-            //i++;
-            //j = 1;
         }
 
         mMapView.invalidate();

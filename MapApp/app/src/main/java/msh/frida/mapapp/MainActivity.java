@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AlertDialogManager alert = new AlertDialogManager();
 
     private RequestQueue requestQueue;
-    private String insertUrl = "https://pecora.no/app/insertHike.php";
+    private String insertUrl = "https://pecora.no/app/insertHikes.php";
+    //private String insertUrl2 = "http://10.22.38.89/pecora-web/app/insertHikes.php";
     private HikeModel hike;
     private int numberOfSyncedHikes;
 
@@ -183,61 +184,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(getApplicationContext(), "Ingen turer å synkronisere", Toast.LENGTH_SHORT).show();
             System.out.println("Ingenting å synke");
         } else {
-            for (final HikeModel hike : userHikes) {
-                this.hike = hike;
+            // GSON wrap the hikes
+            Gson gsonHikes = new Gson();
+            final String hikesString = gsonHikes.toJson(userHikes);
+            //System.out.println(hikesString);
 
-                StringRequest request = new StringRequest(Request.Method.POST, insertUrl, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            if (jsonObject.names().get(0).equals("success")) {
-                                numberOfSyncedHikes++;
-                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("success")+ " ("+numberOfSyncedHikes+")", Toast.LENGTH_SHORT).show();
-                            } else {
-                                numberOfSyncedHikes++;
-                                Toast.makeText(getApplicationContext(), ""+ jsonObject.getString("error")+ " ("+numberOfSyncedHikes+")", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+            // Start POST request
+            StringRequest request = new StringRequest(Request.Method.POST, insertUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.names().get(0).equals("success")) {
+                            System.out.println(jsonObject.getString("success"));
+                            Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            System.out.println(jsonObject.getString("error"));
+                            Toast.makeText(getApplicationContext(), jsonObject.getString("error"), Toast.LENGTH_SHORT).show();
                         }
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
 
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> parameters = new HashMap<>();
-                        parameters.put("title", hike.getTitle());
-                        parameters.put("name", hike.getName());
-                        parameters.put("participants", String.valueOf(hike.getNumberOfParticipants()));
-                        parameters.put("weather", hike.getWeatherState());
-                        parameters.put("description", hike.getDescription());
-                        parameters.put("startdate", String.valueOf(hike.getDateStart()));
-                        parameters.put("enddate", String.valueOf(hike.getDateEnd()));
-                        parameters.put("mapfile", hike.getMapFileName());
-                        parameters.put("distance", String.valueOf(hike.getDistance()));
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-                        // JSON conversion of observation points
-                        Gson gsonObservationPoints = new Gson();
-                        String observationPointsString = gsonObservationPoints.toJson(hike.getObservationPoints());
-                        parameters.put("observationPoints", observationPointsString);
-                        // JSON conversion of track
-                        Gson gsonTrack = new Gson();
-                        String trackString = gsonTrack.toJson(hike.getTrackPoints());
-                        parameters.put("track", trackString);
-
-                        parameters.put("userId", userId);
-                        parameters.put("localId", String.valueOf(hike.getId()));
-                        return parameters;
-                    }
-                };
-                requestQueue.add(request);
-            }
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put("hikes", hikesString);
+                    return parameters;
+                }
+            };
+            requestQueue.add(request);
         }
     }
 

@@ -5,21 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,16 +32,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
@@ -53,19 +41,15 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import msh.frida.mapapp.Models.HikeModel;
@@ -73,21 +57,17 @@ import msh.frida.mapapp.Models.Observation;
 import msh.frida.mapapp.Models.ObservationPoint;
 import msh.frida.mapapp.Other.DatabaseHandler;
 import msh.frida.mapapp.Other.SessionManager;
-import msh.frida.mapapp.Other.VolleyMultipartRequest;
 
-public class HikeActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
+public class DemoHikeActivity extends AppCompatActivity implements View.OnClickListener, LocationListener, MapEventsReceiver {
 
     protected MapView mMapView;
     private IMapController mMapController;
-    private LocationManager mLocationManager;
-    private GpsMyLocationProvider provider;
-    private MyLocationNewOverlay mLocationOverlay;
-    private Location currentLocation;
-    private Location lastKnownLocation;
 
+    private LocationManager mLocationManager;
     private Polyline track;
     private List<GeoPoint> trackingPoints;
     private GeoPoint currentPoint;
+
     private boolean mObservationPointMode;
     private float distanceWalked = 0.0f;
 
@@ -109,22 +89,13 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnPointSave;
     private FrameLayout frameLayout;
 
-    private boolean animateToLocation;
-    private boolean isStartMarkerPutOnMap;
-
     // Session Manager Class
     SessionManager sessionManager;
     private String userId;
 
-    // Upload image tutorial variables
-    private static final String ROOT_URL = "http://62.92.111.219/pecora-web/app/uploadImage.php?apicall=";
-    public static final String UPLOAD_URL = ROOT_URL + "uploadpic";
-    public static final String GET_PICS_URL = ROOT_URL + "getpics";
-    protected static final String PROTOCOL_CHARSET = "utf-8";
-
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hike);
+        setContentView(R.layout.activity_demo_hike);
 
         // Need user ID from session
         sessionManager = new SessionManager(getApplicationContext());
@@ -136,107 +107,70 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         hikeModel = extras.getParcelable("hikeObject");
         String fileName = hikeModel.getMapFileName()+".sqlite";
 
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        mMapView = (MapView) findViewById(R.id.map);
+        mMapView = (MapView) findViewById(R.id.demo_map);
         mMapView.setUseDataConnection(false);
-        mMapView.setMinZoomLevel(13);
+        mMapView.setMinZoomLevel(10);
         mMapView.setMaxZoomLevel(18);
         mMapController = mMapView.getController();
-
         mMapView.getTileProvider().setTileLoadFailureImage(getResources().getDrawable(R.drawable.notfound));
-
-        getCachedMap(fileName);
-
-        provider = new GpsMyLocationProvider(this);
-        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
-        mLocationOverlay = new MyLocationNewOverlay(provider, mMapView);
-        mLocationOverlay.enableMyLocation();
-        mMapView.getOverlays().add(this.mLocationOverlay);
-
-        mMapController.setZoom(15);
-
         mMapView.setTilesScaledToDpi(true);
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
         mMapView.setFlingEnabled(true);
 
-        /*track = new Polyline();
-        track.setWidth(5f);
-        track.setColor(Color.BLUE);
-        track.setGeodesic(true);
-        trackingPoints = new ArrayList<>();
-        mMapView.getOverlayManager().add(0, track);*/
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this, this);
+        mMapView.getOverlays().add(0, mapEventsOverlay);
+
+        // Get the cached map with map file chosen in last activity
+        getCachedMap(fileName);
+
+        mMapController.setZoom(15);
 
         // Creating the list for observation points
         observationPointsList = new ArrayList<>();
 
-        currentPoint = mLocationOverlay.getMyLocation();
-
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnownLocation != null) {
-                mMapController.animateTo(new GeoPoint(lastKnownLocation));
-                currentLocation = lastKnownLocation;
-                //onLocationChanged(lastKnownLocation);
-            }
-        }*/
-
-        btnCenterMap = (ImageButton) findViewById(R.id.imgBtn_center_map);
+        // Initialize all layout elements
+        btnCenterMap = (ImageButton) findViewById(R.id.demo_imgBtnCenterMap);
         btnCenterMap.setOnClickListener(this);
 
-        btnNewObservationPoint = (ImageButton) findViewById(R.id.imgBtn_new_point);
+        btnNewObservationPoint = (ImageButton) findViewById(R.id.demo_imgBtnNewPoint);
         btnNewObservationPoint.setOnClickListener(this);
 
-        btnNewObservation = (ImageButton) findViewById(R.id.imgBtn_new_observation);
+        btnNewObservation = (ImageButton) findViewById(R.id.demo_imgBtnNewObservation);
         btnNewObservation.setOnClickListener(this);
 
-        btnTakePicture = (ImageButton) findViewById(R.id.imgBtn_camera);
+        btnTakePicture = (ImageButton) findViewById(R.id.demo_imgBtnCamera);
         btnTakePicture.setOnClickListener(this);
 
-        btnStopHike = (ImageButton) findViewById(R.id.imgBtn_stop_hike);
+        btnStopHike = (ImageButton) findViewById(R.id.demo_imgBtnStopHike);
         btnStopHike.setOnClickListener(this);
 
-        btnObservationOk = (Button) findViewById(R.id.btn_observation_ok);
+        btnObservationOk = (Button) findViewById(R.id.demo_btnObsOk);
         btnObservationOk.setOnClickListener(this);
 
-        btnObservationCancel = (Button) findViewById(R.id.btn_observation_cancel);
+        btnObservationCancel = (Button) findViewById(R.id.demo_btnObsCancel);
         btnObservationCancel.setOnClickListener(this);
 
-        btnPointSave = (Button) findViewById(R.id.btn_obs_point_save);
+        btnPointSave = (Button) findViewById(R.id.demo_btnObsPointSave);
         btnPointSave.setOnClickListener(this);
 
-        imgCross = (ImageView) findViewById(R.id.img_cross);
-        imgCrossMarker = (ImageView) findViewById(R.id.img_marker_cross);
-        tblButtons = (TableLayout) findViewById(R.id.table_btns);
-        frameLayout = (FrameLayout) findViewById(R.id.frame_layout_1);
+        imgCross = (ImageView) findViewById(R.id.demo_imgCross);
+        imgCrossMarker = (ImageView) findViewById(R.id.demo_imgMarkerCross);
+        tblButtons = (TableLayout) findViewById(R.id.demo_tableBtns);
+        frameLayout = (FrameLayout) findViewById(R.id.demo_frameLayout);
+
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        startLocationUpdates();
+
+        // For Lønset map
+        //GeoPoint point = new GeoPoint(62.616797, 9.259181);
+        //mMapController.setCenter(point);
+        //pickStartPoint();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        boolean isOneProviderEnabled = startLocationUpdates();
-        mLocationOverlay.setEnabled(isOneProviderEnabled);
-
-        animateToLocation = true;
-        System.out.println("Animate to location = " + animateToLocation);
-    }
-
-    boolean startLocationUpdates() {
-        boolean result = false;
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            System.out.println("Start location updates");
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3*1000, 5.0f, this);
-            result = true;
-        }*/
-        for (final String provider : mLocationManager.getProviders(true)) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(provider, 2*1000, 2.0f, this);
-                result = true;
-            }
-        }
-        return result;
     }
 
     @Override
@@ -263,10 +197,6 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        // Remove location updates when hike is stopped
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.removeUpdates(this);
-        }
         super.onBackPressed();
     }
 
@@ -329,18 +259,76 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void startLocationUpdates() {
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Start location updates");
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1*1000, 0.0f, this);
+        }*/
+        for (final String provider : mLocationManager.getProviders(true)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(provider, 1*1000, 0.0f, this);
+            }
+        }
+    }
+
+    private void stopLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+        }
+    }
+
+    private void pickStartPoint() {
+        //Stop location updates
+        stopLocationUpdates();
+
+        // Show drawables for new observation
+        final Button btnPickStart = (Button) findViewById(R.id.demo_btnStartPoint);
+        btnPickStart.setVisibility(View.VISIBLE);
+        imgCross.setVisibility(View.VISIBLE);
+        imgCrossMarker.setVisibility(View.VISIBLE);
+
+        // Hide other drawables
+        btnCenterMap.setVisibility(View.INVISIBLE);
+        btnNewObservationPoint.setVisibility(View.INVISIBLE);
+        btnStopHike.setVisibility(View.INVISIBLE);
+        mMapView.setBuiltInZoomControls(false);
+
+        // Click listener
+        btnPickStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializeTrack();
+
+                GeoPoint startPoint = (GeoPoint) mMapView.getMapCenter();
+                putStartMarkerOnMap(startPoint);
+                currentPoint = startPoint;
+
+                drawTrack(currentPoint);
+
+                // Hide
+                btnPickStart.setVisibility(View.INVISIBLE);
+                imgCross.setVisibility(View.INVISIBLE);
+                imgCrossMarker.setVisibility(View.INVISIBLE);
+                // Show
+                btnCenterMap.setVisibility(View.VISIBLE);
+                btnNewObservationPoint.setVisibility(View.VISIBLE);
+                btnStopHike.setVisibility(View.VISIBLE);
+                mMapView.setBuiltInZoomControls(true);
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imgBtn_center_map:
-                if (currentLocation != null) {
-                    GeoPoint myPosition = new GeoPoint(currentLocation);
-                    mMapController.animateTo(myPosition);
+            case R.id.demo_imgBtnCenterMap:
+                if (currentPoint != null) {
+                    mMapController.animateTo(currentPoint);
                 }
                 break;
 
-            case R.id.imgBtn_new_point:
-                if (currentLocation != null) {
+            case R.id.demo_imgBtnNewPoint:
+                if (currentPoint != null) {
                     mObservationPointMode = true;
                     if (mObservationPointMode) {
                         //btnNewObservationPoint.setEnabled(false);
@@ -366,7 +354,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
 
-            case R.id.btn_obs_point_save:
+            case R.id.demo_btnObsPointSave:
                 mObservationPointMode = false;
                 observationPointsList.add(currentObservationPoint);
 
@@ -377,7 +365,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 btnTakePicture.setVisibility(View.INVISIBLE);
                 break;
 
-            case R.id.imgBtn_new_observation:
+            case R.id.demo_imgBtnNewObservation:
                 // Show drawables for new observation
                 imgCross.setVisibility(View.VISIBLE);
                 imgCrossMarker.setVisibility(View.VISIBLE);
@@ -393,13 +381,13 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 mMapView.setBuiltInZoomControls(false);
                 break;
 
-            case R.id.btn_observation_ok:
+            case R.id.demo_btnObsOk:
                 // Get observation information
                 getObservationInformationFromUser();
                 mMapView.setBuiltInZoomControls(true);
                 break;
 
-            case R.id.btn_observation_cancel:
+            case R.id.demo_btnObsCancel:
                 // Make observation objects invisible
                 imgCross.setVisibility(View.INVISIBLE);
                 imgCrossMarker.setVisibility(View.INVISIBLE);
@@ -414,7 +402,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 mMapView.setBuiltInZoomControls(true);
                 break;
 
-            case R.id.imgBtn_stop_hike:
+            case R.id.demo_imgBtnStopHike:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Avslutt tur");
                 alertDialog.setMessage("Er du sikker på at du vil avslutte og lagre turen?");
@@ -433,113 +421,11 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
                 AlertDialog alert = alertDialog.create();
                 alert.show();
 
-            case R.id.imgBtn_camera:
+            case R.id.demo_imgBtnCamera:
                 // TODO: Legg in funksjonalitet for å ta bilde
                 //dispatchTakePictureIntent();
                 break;
         }
-    }
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    //For camera activity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
-            //getting the image Uri
-            Uri imageUri = data.getData();
-            try {
-                //getting bitmap object from uri
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-
-                //displaying selected image to imageview
-                //imageView.setImageBitmap(bitmap);
-
-                //calling the method uploadBitmap to upload image
-                uploadBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /*
-    * The method is taking Bitmap as an argument
-    * then it will return the byte[] array for the given bitmap
-    * and we will send this array to the server
-    * here we are using PNG Compression with 80% quality
-    * you can give quality between 0 to 100
-    * 0 means worse quality
-    * 100 means best quality
-    * */
-    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private void uploadBitmap(final Bitmap bitmap) {
-
-        //getting the tag from the edittext
-        //final String tags = editTextTags.getText().toString().trim();
-
-        //our custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, UPLOAD_URL,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        try {
-                            String responseData = new String(response.data);
-                            Log.i("tagconvertstr", "["+responseData+"]");
-                            JSONObject obj = new JSONObject(new String(response.data));
-                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-
-            /*
-            * If you want to add more parameters with the image
-            * you can do it here
-            * here we have only one parameter with the image
-            * which is tags
-            * */
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("tags", "img");
-                return params;
-            }
-
-            /*
-            * Here we are passing image by renaming it with a unique name
-            * */
-            @Override
-            protected Map<String, DataPart> getByteData() {
-                Map<String, DataPart> params = new HashMap<>();
-                long imagename = System.currentTimeMillis();
-                params.put("pic", new DataPart(imagename + ".png", getFileDataFromDrawable(bitmap)));
-                return params;
-            }
-        };
-
-        //adding the request to volley
-        Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
 
     private void registerNewPoint() {
@@ -550,31 +436,28 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         btnTakePicture.setVisibility(View.VISIBLE);
 
         // New observation point, clearing it if it exists
-        GeoPoint observationPointLocation = new GeoPoint(currentLocation);
-        currentObservationPoint = new ObservationPoint(observationPointLocation);
+        currentObservationPoint = new ObservationPoint(currentPoint);
         currentObservationPoint.setTimeOfObservationPoint(Calendar.getInstance().getTimeInMillis());
 
         // Put marker on the map for observation point
         Marker observationMarker = new Marker(mMapView);
         observationMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_small));
-        observationMarker.setPosition(observationPointLocation);
+        observationMarker.setPosition(currentPoint);
         observationMarker.setTitle("Observasjonspunkt " + currentObservationPoint.getPointId());
         mMapView.getOverlays().add(observationMarker);
         mMapView.invalidate();
     }
 
     private void stopHike() {
-        // Remove location updates when hike is stopped
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.removeUpdates(this);
+        if (currentObservationPoint != null) {
+            currentObservationPoint.resetId();
         }
-
-        currentObservationPoint.resetId();
-        currentObservation.resetId();
+        if (currentObservation != null) {
+            currentObservation.resetId();
+        }
 
         // Set relevant things in hike model
         hikeModel.setObservationPoints(observationPointsList);
-        //hikeModel.setTrack(track);
         hikeModel.setTrackPoints(track.getPoints());
         hikeModel.setDateEnd(Calendar.getInstance().getTimeInMillis());
         double distanceRoundOff = Math.round(distanceWalked * 100.0) / 100.0;
@@ -760,112 +643,112 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         helpBuilder.setPositiveButton("Ok",
-        new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                GeoPoint observationLocation = (GeoPoint) mMapView.getMapCenter();
-                currentObservation = new Observation(observationLocation);
-                //observationId += 1;
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        GeoPoint observationLocation = (GeoPoint) mMapView.getMapCenter();
+                        currentObservation = new Observation(observationLocation);
+                        //observationId += 1;
 
-                // Update the map with marker
-                Marker observationMarker = new Marker(mMapView);
-                observationMarker.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.icon_dot_yellow_small));
-                observationMarker.setPosition(observationLocation);
-                observationMarker.setTitle("Observasjon " + currentObservation.getId());
-                if (cb1.isChecked() && !TextUtils.isEmpty(et1.getText().toString())) {
-                    if (!(spinnerWhite.matches("0") && spinnerBlack.matches("0") && spinnerMix.matches("0"))) {
-                        currentObservation.setTypeOfObservation("Sau");
-                        currentObservation.setDetails(spinnerWhite + " hvite, " +
-                                spinnerBlack + " svarte og " +
-                                spinnerMix + " blanding");
-                        observationMarker.setSubDescription("Antall sau: " + et1.getText().toString() + ", " +
-                                spinnerWhite + " hvite, " +
-                                spinnerBlack + " svarte og " +
-                                spinnerMix + " blanding");
-                        // Want total of seen sheep on the observation point
-                        currentObservationPoint.increaseSheepCount(Integer.parseInt(et1.getText().toString()));
-                        currentObservation.setSheepCount(Integer.parseInt(et1.getText().toString()));
-                    } else {
-                        currentObservation.setTypeOfObservation("Sau");
-                        currentObservation.setDetails("Ingen detaljer");
-                        currentObservation.setSheepCount(Integer.parseInt(et1.getText().toString()));
-                        // Want total of seen sheep on the observation point
-                        currentObservationPoint.increaseSheepCount(Integer.parseInt(et1.getText().toString()));
-                        observationMarker.setSubDescription("Antall sau: " + et1.getText().toString());
-                    }
-                } else if (cb2.isChecked() && !TextUtils.isEmpty(et2.getText().toString())) {
-                    currentObservation.setTypeOfObservation("Skadet sau");
-                    currentObservation.setDetails(et2.getText().toString());
-                    currentObservation.setSheepCount(1);
-                    currentObservationPoint.increaseSheepCount(1);
-                    observationMarker.setSubDescription("Skadet sau, detaljer: " + et2.getText().toString());
-                } else if (cb3.isChecked() && !TextUtils.isEmpty(et3.getText().toString())) {
-                    currentObservation.setTypeOfObservation("Død sau");
-                    currentObservation.setDetails(et3.getText().toString());
-                    currentObservation.setSheepCount(1);
-                    currentObservationPoint.increaseSheepCount(1);
-                    observationMarker.setSubDescription("Død sau, detaljer: " + et3.getText().toString());
-                } else if (cb4.isChecked() && !TextUtils.isEmpty(et4.getText().toString())) {
-                    currentObservation.setTypeOfObservation("Rovdyr");
-                    currentObservation.setDetails(et4.getText().toString());
-                    observationMarker.setSubDescription("Rovdyr, type: " + et4.getText().toString());
-                } else if (cb5.isChecked() && !TextUtils.isEmpty(et5.getText().toString())) {
-                    currentObservation.setTypeOfObservation("Jeger");
-                    currentObservation.setDetails(et5.getText().toString());
-                    observationMarker.setSubDescription("Jeger, detaljer: " + et5.getText().toString());
-                } else if (cb6.isChecked() && !TextUtils.isEmpty(et6.getText().toString())) {
-                    currentObservation.setTypeOfObservation("Løs hund");
-                    currentObservation.setDetails(et6.getText().toString());
-                    observationMarker.setSubDescription("Løs hund, detaljer: " + et6.getText().toString());
-                }
-
-                // Add current observation to list with correct info
-                currentObservationPoint.getObservationList().add(currentObservation);
-
-                observationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                        if (mObservationPointMode) {
-                            System.out.println("Does user want to add sheep to this observation?");
-                            String id = marker.getTitle().substring(marker.getTitle().indexOf(' ')+1);
-                            addSheepToEarlierObservation(Integer.parseInt(id), marker);
-                        } else {
-                            marker.showInfoWindow();
+                        // Update the map with marker
+                        Marker observationMarker = new Marker(mMapView);
+                        observationMarker.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.icon_dot_yellow_small));
+                        observationMarker.setPosition(observationLocation);
+                        observationMarker.setTitle("Observasjon " + currentObservation.getId());
+                        if (cb1.isChecked() && !TextUtils.isEmpty(et1.getText().toString())) {
+                            if (!(spinnerWhite.matches("0") && spinnerBlack.matches("0") && spinnerMix.matches("0"))) {
+                                currentObservation.setTypeOfObservation("Sau");
+                                currentObservation.setDetails(spinnerWhite + " hvite, " +
+                                        spinnerBlack + " svarte og " +
+                                        spinnerMix + " blanding");
+                                observationMarker.setSubDescription("Antall sau: " + et1.getText().toString() + ", " +
+                                        spinnerWhite + " hvite, " +
+                                        spinnerBlack + " svarte og " +
+                                        spinnerMix + " blanding");
+                                // Want total of seen sheep on the observation point
+                                currentObservationPoint.increaseSheepCount(Integer.parseInt(et1.getText().toString()));
+                                currentObservation.setSheepCount(Integer.parseInt(et1.getText().toString()));
+                            } else {
+                                currentObservation.setTypeOfObservation("Sau");
+                                currentObservation.setDetails("Ingen detaljer");
+                                currentObservation.setSheepCount(Integer.parseInt(et1.getText().toString()));
+                                // Want total of seen sheep on the observation point
+                                currentObservationPoint.increaseSheepCount(Integer.parseInt(et1.getText().toString()));
+                                observationMarker.setSubDescription("Antall sau: " + et1.getText().toString());
+                            }
+                        } else if (cb2.isChecked() && !TextUtils.isEmpty(et2.getText().toString())) {
+                            currentObservation.setTypeOfObservation("Skadet sau");
+                            currentObservation.setDetails(et2.getText().toString());
+                            currentObservation.setSheepCount(1);
+                            currentObservationPoint.increaseSheepCount(1);
+                            observationMarker.setSubDescription("Skadet sau, detaljer: " + et2.getText().toString());
+                        } else if (cb3.isChecked() && !TextUtils.isEmpty(et3.getText().toString())) {
+                            currentObservation.setTypeOfObservation("Død sau");
+                            currentObservation.setDetails(et3.getText().toString());
+                            currentObservation.setSheepCount(1);
+                            currentObservationPoint.increaseSheepCount(1);
+                            observationMarker.setSubDescription("Død sau, detaljer: " + et3.getText().toString());
+                        } else if (cb4.isChecked() && !TextUtils.isEmpty(et4.getText().toString())) {
+                            currentObservation.setTypeOfObservation("Rovdyr");
+                            currentObservation.setDetails(et4.getText().toString());
+                            observationMarker.setSubDescription("Rovdyr, type: " + et4.getText().toString());
+                        } else if (cb5.isChecked() && !TextUtils.isEmpty(et5.getText().toString())) {
+                            currentObservation.setTypeOfObservation("Jeger");
+                            currentObservation.setDetails(et5.getText().toString());
+                            observationMarker.setSubDescription("Jeger, detaljer: " + et5.getText().toString());
+                        } else if (cb6.isChecked() && !TextUtils.isEmpty(et6.getText().toString())) {
+                            currentObservation.setTypeOfObservation("Løs hund");
+                            currentObservation.setDetails(et6.getText().toString());
+                            observationMarker.setSubDescription("Løs hund, detaljer: " + et6.getText().toString());
                         }
-                        return false;
+
+                        // Add current observation to list with correct info
+                        currentObservationPoint.getObservationList().add(currentObservation);
+
+                        observationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                                if (mObservationPointMode) {
+                                    System.out.println("Does user want to add sheep to this observation?");
+                                    String id = marker.getTitle().substring(marker.getTitle().indexOf(' ')+1);
+                                    addSheepToEarlierObservation(Integer.parseInt(id), marker);
+                                } else {
+                                    marker.showInfoWindow();
+                                }
+                                return false;
+                            }
+                        });
+                        mMapView.getOverlays().add(observationMarker);
+
+                        // Draw line from observation point to observation
+                        Polyline line = new Polyline();
+                        line.setWidth(3f);
+                        line.setColor(Color.RED);
+                        line.setGeodesic(true);
+                        ArrayList<GeoPoint> points = new ArrayList<>();
+                        points.add(currentObservationPoint.getLocation());
+                        points.add(observationLocation);
+                        line.setPoints(points);
+                        mMapView.getOverlays().add(0, line);
+
+                        mMapView.invalidate();
+
+                        // Make drawables invisible again
+                        imgCross.setVisibility(View.INVISIBLE);
+                        imgCrossMarker.setVisibility(View.INVISIBLE);
+                        tblButtons.setVisibility(View.INVISIBLE);
+                        frameLayout.setVisibility(View.INVISIBLE);
+
+                        // Make drawables visible again
+                        btnCenterMap.setVisibility(View.VISIBLE);
+                        btnNewObservation.setVisibility(View.VISIBLE);
+                        btnPointSave.setVisibility(View.VISIBLE);
+                        btnStopHike.setVisibility(View.VISIBLE);
+                        btnTakePicture.setVisibility(View.VISIBLE);
+
+                        // Reset text view boolean
+                        isTw1Clicked = false;
                     }
                 });
-                mMapView.getOverlays().add(observationMarker);
-
-                // Draw line from observation point to observation
-                Polyline line = new Polyline();
-                line.setWidth(3f);
-                line.setColor(Color.RED);
-                line.setGeodesic(true);
-                ArrayList<GeoPoint> points = new ArrayList<>();
-                points.add(currentObservationPoint.getLocation());
-                points.add(observationLocation);
-                line.setPoints(points);
-                mMapView.getOverlays().add(0, line);
-
-                mMapView.invalidate();
-
-                // Make drawables invisible again
-                imgCross.setVisibility(View.INVISIBLE);
-                imgCrossMarker.setVisibility(View.INVISIBLE);
-                tblButtons.setVisibility(View.INVISIBLE);
-                frameLayout.setVisibility(View.INVISIBLE);
-
-                // Make drawables visible again
-                btnCenterMap.setVisibility(View.VISIBLE);
-                btnNewObservation.setVisibility(View.VISIBLE);
-                btnPointSave.setVisibility(View.VISIBLE);
-                btnStopHike.setVisibility(View.VISIBLE);
-                btnTakePicture.setVisibility(View.VISIBLE);
-
-                // Reset text view boolean
-                isTw1Clicked = false;
-            }
-        });
 
         AlertDialog helpDialog = helpBuilder.create();
         helpDialog.show();
@@ -945,60 +828,19 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void drawTrack(GeoPoint point) {
-        // Add only if the new location is different from previous location
-        if (point != currentPoint) {
-             trackingPoints.add(point);
-        }
-        // If the geopoints list is not empty, set the points of the Polyline track
-        if (!trackingPoints.isEmpty()) {
-            track.setPoints(trackingPoints);
-            mMapView.invalidate();
-        }
+        trackingPoints.add(point);
+        track.setPoints(trackingPoints);
+        mMapView.invalidate();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if (animateToLocation) {
-            mMapController.animateTo(new GeoPoint(location));
-            if (!isStartMarkerPutOnMap) {
-                putStartMarkerOnMap(location);
-                initializeTrack();
-            }
-            animateToLocation = false;
-        }
-
-        float distanceInMeters = 0;
-
-        if (location.hasAccuracy() && location.getAccuracy() < 8) {
-            if (currentLocation != null) {
-                distanceInMeters = currentLocation.distanceTo(location);
-                float distanceInKilometers = distanceInMeters/1000;
-                distanceWalked += distanceInKilometers;
-            }
-        }
-
-        currentLocation = location;
-        //System.out.println("Distance walked: " + distanceWalked + " km");
-
-        GeoPoint newPoint = new GeoPoint(location);
-        // Check if there is a 1 m distance between the new and current location before drawing
-        if (distanceInMeters < 1) {
-            // Draw track
-            drawTrack(newPoint);
-        }
-        // Set current point after drawing
-        currentPoint = newPoint;
-    }
-
-    private void putStartMarkerOnMap(Location location) {
+    private void putStartMarkerOnMap(GeoPoint startPoint) {
         Marker startMarker = new Marker(mMapView);
         startMarker.setIcon(ContextCompat.getDrawable(this, R.drawable.icon_location_red_small));
-        startMarker.setPosition(new GeoPoint(location));
+        startMarker.setPosition(startPoint);
         startMarker.setTitle("Startpunkt");
         startMarker.setSubDescription("Kl. " + getTime(Calendar.getInstance().getTimeInMillis()));
-        mMapView.getOverlays().add(0, startMarker);
+        mMapView.getOverlays().add(startMarker);
         mMapView.invalidate();
-        isStartMarkerPutOnMap = true;
     }
 
     private void initializeTrack() {
@@ -1007,7 +849,7 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         track.setColor(Color.BLUE);
         track.setGeodesic(true);
         trackingPoints = new ArrayList<>();
-        mMapView.getOverlayManager().add(0, track);
+        mMapView.getOverlayManager().add(track);
     }
 
     private String getTime(Long dateInMillis) {
@@ -1018,22 +860,6 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
         String[] timeArray = dateArray[3].split(":");
 
         return timeArray[0] + ":" + timeArray[1];
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        System.out.println("onProviderEnabled() event");
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -1066,11 +892,50 @@ public class HikeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.removeUpdates(this);
-        }*/
+    }
 
-        animateToLocation = false;
-        System.out.println("Animate to location = " + animateToLocation);
+    @Override
+    public void onLocationChanged(Location location) {
+        System.out.println("SE HER: onLocationChanged()");
+        mMapController.animateTo(new GeoPoint(location));
+        pickStartPoint();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint p) {
+        return false;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint p) {
+        // Calculate distance
+        int distanceInMeters = currentPoint.distanceTo(p);
+        float distanceInKilometers = (float) distanceInMeters / 1000;
+        distanceWalked += distanceInKilometers;
+
+        Toast.makeText(getApplicationContext(), "New track point added", Toast.LENGTH_SHORT).show();
+
+        // Draw track
+        drawTrack(p);
+
+        // Update current point
+        currentPoint = p;
+
+        return true;
     }
 }

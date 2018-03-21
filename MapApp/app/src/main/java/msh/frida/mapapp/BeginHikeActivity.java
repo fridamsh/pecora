@@ -28,6 +28,7 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
     private HikeModel hike;
 
     private Button btnStart;
+    private Button btnStartDemo;
     private EditText etName;
     private EditText etWeather;
     private EditText etDescription;
@@ -72,6 +73,9 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
 
         btnStart = (Button) findViewById(R.id.btn_start_hike);
         btnStart.setOnClickListener(this);
+
+        btnStartDemo = (Button) findViewById(R.id.btn_start_demo);
+        btnStartDemo.setOnClickListener(this);
     }
 
     @Override
@@ -144,7 +148,6 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start_hike:
-                System.out.println("\n CLICKED! \n");
                 hike.setTitle(getHikeTitle());
                 if (TextUtils.isEmpty(etName.getText().toString())) {
                     hike.setName("Ukjent");
@@ -164,12 +167,38 @@ public class BeginHikeActivity extends AppCompatActivity implements View.OnClick
                 }
                 hike.setMapFileName(chosenFileName);
                 hike.setDateStart(Calendar.getInstance().getTimeInMillis());
-                System.out.println(Calendar.getInstance().getTimeInMillis());
-                // TODO: set DateEnd after ended hike
 
                 Intent intent1 = new Intent(this, HikeActivity.class);
                 intent1.putExtra("hikeObject", (Parcelable) hike);
                 startActivity(intent1);
+                finish();
+                break;
+
+            case R.id.btn_start_demo:
+                hike.setTitle(getHikeTitle());
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setName("Ukjent");
+                } else {
+                    hike.setName(etName.getText().toString());
+                }
+                hike.setNumberOfParticipants(Integer.parseInt(stParticipants));
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setWeatherState("Ukjent");
+                } else {
+                    hike.setWeatherState(etWeather.getText().toString());
+                }
+                if (TextUtils.isEmpty(etName.getText().toString())) {
+                    hike.setDescription("Ukjent");
+                } else {
+                    hike.setDescription(etDescription.getText().toString());
+                }
+                hike.setMapFileName(chosenFileName);
+                hike.setDateStart(Calendar.getInstance().getTimeInMillis());
+
+                // Start demo activity
+                Intent intent2 = new Intent(this, DemoHikeActivity.class);
+                intent2.putExtra("hikeObject", (Parcelable) hike);
+                startActivity(intent2);
                 finish();
                 break;
         }

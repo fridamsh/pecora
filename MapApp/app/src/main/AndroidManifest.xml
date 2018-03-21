@@ -14,7 +14,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
@@ -100,8 +102,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="msh.frida.mapapp.HistoryItemActivity" />
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegistrationActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/login_activity_name"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".RegistrationActivity"
+            android:label="@string/register_activity_name"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".DemoHikeActivity"
+            android:label="@string/demo_hike_activity_name"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="msh.frida.mapapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
